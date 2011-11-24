@@ -1,0 +1,24 @@
+name: Koztumize
+description: Dress your documents
+license: GPLv3
+public: true
+url: http://www.koztumize.org/
+
+menu:
+  - Download:
+      link: /download/
+
+vcs (git):
+  url: git://github.com/Kozea/Koztumize.git
+  path: /var/db/git/koztumize.git
+
+code browser (github):
+  project name: Kozea/Koztumize
+
+bug tracker (redmine):
+  base url: http://redmine.kozea.fr/
+  project name: koztumize
+
+continuous integration (jenkins):
+  base url: http://jenkins.kozea.org/
+  project name: Koztumize
