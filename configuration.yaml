@@ -8,6 +8,10 @@ menu:
   - Download:
       link: /download/
 
+project (git):
+  url: git://github.com/Kozea/Koztumize.git
+  path: koztumize
+
 vcs (git):
   url: git://github.com/Kozea/Koztumize.git
   path: /var/db/git/koztumize.git
