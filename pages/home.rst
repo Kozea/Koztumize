@@ -6,3 +6,6 @@ Presentation
 ============
 
 Koztumize is a document generator.
+
+Documentation
+=============
