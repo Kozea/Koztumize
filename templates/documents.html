@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block title %}- Documents{% endblock title %}
+
+{% block head %}
+<script>
+$(function() { 
+  /*$('#doc-list>li h3').click(function () {
+    $(this).find('#doc-list>li>ul').toggle();
+  });
+  $('#doc-list>li h4').click(function () {
+    $('#versions-list').toggle();
+  });
+});*/
+</script>
+
+{% endblock head %}
+
+
+{% block content %}
+  <h2>Vos documents</h2>
+  <ul id="doc-list">
+  {% for cls in document_classes %}
+    {% set ids = cls.list_document_ids()|list %}
+    {% if ids|length > 0 %}
+      <li><h3>{{ cls.type_name.capitalize() }}</h3>
+        <ul>
+          {% for document_id in ids %}
+            {% set history = cls(document_id).history | list %}
+            <li>
+              <h4><a href="{{ url_for('edit', document_type=cls.type_name, document_name=document_id) }}">{{ document_id }}</a></h4>
+              <ul>
+                {% for version in history %}
+                  <li>
+                    <a href="{{ url_for('edit', document_type=cls.type_name, document_name=document_id, version=version.version) }}">{{ version.datetime }}</a> 
+                    <span class="document-info">{{ version.message }} </span>
+                  </li>
+                {% endfor %}
+              </ul>
+            </li>
+          {% endfor %}
+        </ul>
+      </li>
+    {% endif %}
+  {% endfor %}
+  </ul>
+{% endblock content %}

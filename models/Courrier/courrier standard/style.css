@@ -1,0 +1,155 @@
+@import "model.css";
+
+@page :first {
+  background-image: url(img/header+o+footer.svg);
+  padding-top: 0;
+}
+
+@page {
+  size: 21.0cm 29.7cm;
+  background: url(img/o+footer.svg) no-repeat bottom center;
+  margin: 0 2em;
+  padding-bottom: 9em;
+  padding-top: 5em;
+}
+
+@media screen {
+body {
+  background: url(img/logo.svg) 10mm 10mm no-repeat,
+     url(img/footer.svg) center bottom no-repeat,
+     url(img/o.svg) bottom right no-repeat;
+}
+
+div[contenteditable=true] {
+  border: 1px solid transparent;
+  margin: 0.5em auto;
+  padding: 0.25em 0.1;
+  position: relative;
+  top: -0.25em;
+  min-height: 1.25em;
+}
+
+div[contenteditable=true]:hover {
+  border-color: #e4e4e4;
+}
+
+div[contenteditable=true]:empty:before {
+  content: attr(title);
+  display: block;
+  height: 1em;
+  margin-bottom: -1em;
+  opacity: 0.25;
+}
+
+span[contenteditable=true] {
+  display: inline-block;
+  min-width: 2em;
+}
+
+}
+
+html {
+  color: #222;
+}
+
+body {
+  display: block;
+  margin: 0;
+  min-height: 100%;
+  padding: 0;
+  width: 100%;
+  font-family: 'fontin',sans-serif;
+}
+
+article {
+  padding: 50px 40px;
+}
+
+.destinataire, .signature {
+  text-align: right;
+}
+
+article .date {
+  margin-top: 58px;
+  margin-bottom: 50px;
+  padding-left: 60%;
+  text-align: left;
+}
+
+article .destinataire {
+  margin-bottom: 40px;
+  padding-left: 60% !important;
+  text-align: left;
+}
+
+article .civilites {
+  margin-top: 3em;
+  margin-left: 3em;
+  margin-bottom: 1em;
+}
+
+article .corps, article .salutation, article .definition {
+  padding: 0;
+  margin: 1em 0;
+}
+
+article .signature {
+  margin-right: 100px;
+  margin-top: 20px;
+  margin-bottom: 50px;
+}
+
+article .definition {
+  margin-bottom: -0.75em;
+}
+
+article .definition:before {
+  content: attr(title) " : ";
+  color: #588081;
+}
+
+article p {
+  text-indent: 2.5em;
+}
+
+.civiliste, .salutaliste, .signaliste {
+  list-style: none;
+  color: #cacaca;
+}
+
+.civiliste li:hover, .salutaliste li:hover, .signaliste li:hover {
+  color: #666;
+  cursor: pointer;
+}
+
+dl dd div[contenteditable="true"] {
+  margin: 0 5px 0 0;
+  padding: 0;
+}
+
+dl dt {
+  color: #588081;
+  line-height: 1.5em;
+  margin-right: 15px;
+  vertical-align: top;
+}
+
+@font-face {
+  src: url('Fontin.otf');
+  font-family: 'fontin';
+}
+
+.docinfo {
+  display: none;
+}
+
+.definition:empty {
+  font-weight: bold;
+}
+
+@media print {
+div[contenteditable=true]:empty:before {
+  display: none;
+}
+
+}

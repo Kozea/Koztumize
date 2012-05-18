@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<link href="{{ url_for('static', filename='TeddyBar/teddybar.css') }}" media="screen" type="text/css" rel="stylesheet" />
+<script src="{{ url_for('static', filename='TeddyBar/teddybar.js') }}" type="text/javascript"></script>
+<script>
+    $(function () { $('#teddybar').teddybar({
+        commands : {
+            'save': function() { 
+                var divs = $('#iframe').contents().find('div[contenteditable]');
+                var data = [];
+                $.each(divs, function () {
+                    data.push({
+                        "part": $(this).attr('data-part'),
+                        "document_type": $(this).attr('data-document-type'),
+                        "document_id": $(this).attr('data-document-id'),
+                        "version": $(this).attr('data-document-version'),
+                        "content": $(this).html()
+                    });
+                });
+                // Make ajax
+		        $.ajax({
+			        url: "{{ url_for('save', document_type=document_type) }}",
+			        data: JSON.stringify(data),
+			        contentType: 'application/json',
+			        dataType: 'json',
+			        type: "POST",
+			        success: function(response){
+			            if(response && response.documents) {
+                            var message = 'Contenu enregistré.';
+                            var div = $('<div>', {'class': 'ok'}).html(message);
+                            $('body>section').before(div);
+                            div.slideDown(300).delay(3000).fadeOut();
+                            $.each(response.documents, function () {
+                                var divs = $('#iframe').contents().find(
+                                    'div[contenteditable]' +
+                                    '[data-document-type="' + this.document_type + '"]' +
+                                    '[data-document-id="' + this.document_id + '"]'
+                                );
+                                divs.attr('data-document-version', this.version);
+                            });
+                        } else {
+                            var message = 'Conflit: Veuillez rafraîchir la page.';
+                            var div = $('<div>', {'class': 'error'}).html(message);
+                            $('body>section').before(div);
+                            div.slideDown(300).delay(3000).fadeOut();
+                        }            
+                    }
+		        });			
+	        },
+	        'pdf': function() {
+	            this.save();
+	            var loader = $('<div>', {'class': 'loading'});
+	            loader.fadeIn(500);
+	            
+	            $.ajax({
+		            url:"{{ url_for('pdf_link', document_type=document_type, document_name=document_name) }}",
+		            success: function(response){
+			            $('#loader').hide();
+			            window.location=response;
+		            }
+	            });
+            }
+        }
+    });});
+</script>
+{% endblock head %}
+
+{% block content %}
+  <div id="teddybar"></div>
+  <h2>{{ document_type }}/{{ document_name }}</h2>
+  <iframe src="{{ url_for('model', document_type=document_type, document_name=document_name, version=version) }}" id="iframe"></iframe>
+{% endblock content %}

@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <aside class="index">
+      {% for document in models.keys() %}  
+      <h2>{{ document }}</h2>
+        {% for model in models[document] %}
+        <ul>
+          <li><a href="{{ url_for('create_document', document_type=model) }}" >{{ model }}</a></li>
+        </ul>
+        {% endfor %}
+      {% endfor %}
+    </aside>
+{% endblock content %}

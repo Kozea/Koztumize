@@ -1,0 +1,63 @@
+/*
+    ----------
+    - Iframe -
+    ----------
+  */
+@font-face{
+  src: url('Fontin.otf');
+  font-family: 'fontin';
+}
+
+body{
+  font-family:'fontin',sans-serif;
+}  
+/* Desactive l'affichage du stylesheet */
+.docinfo {
+  display: none;
+}
+
+.definition:before {
+  content: attr(title) " : ";
+}
+
+.definition:empty {
+  font-weight:bold;
+}
+
+
+@media screen{
+  /* - Content Editable - */
+  div[contenteditable=true] {
+    border: 1px solid transparent;
+    margin: 0.5em auto;
+    padding: 0.25em 0.1;
+    position: relative;
+    top: -0.25em;
+    min-height:1.25em;
+  }
+
+  div[contenteditable=true]:hover {
+    border-color: #e4e4e4;
+  }
+
+  div[contenteditable=true]:empty:before {
+    content: attr(title);
+    display:block;
+    height: 1em;
+    margin-bottom: -1em;
+    opacity: 0.25;
+  }
+  
+  span[contenteditable=true]{
+    display:inline-block;
+    min-width:2em;
+  }
+
+}/* Fin media screen */
+
+@media print{
+  div[contenteditable=true]:empty:before{
+    display:none;
+    
+  }  
+}/* Fin media print */

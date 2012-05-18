@@ -1,0 +1,8 @@
+*.pyc
+env
+.coverage
+build
+*.pdf
+static/domain/kozea
+static/domain/keleos
+fondue.py
