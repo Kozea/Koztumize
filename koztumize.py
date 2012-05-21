@@ -1,4 +1,5 @@
 #! /usr/bin/env python2
+# -*- coding: utf-8 -*-
 
 import os
 import ldap
@@ -20,6 +21,7 @@ tz_paris = pytz.timezone('Europe/Paris')
 @app.template_filter()
 def local_time(datetime):
     return pytz.utc.localize(datetime).astimezone(tz_paris)
+
 
 @app.template_filter()
 def strftime(datetime, format):
@@ -77,12 +79,18 @@ def create_document(document_type=None):
     else:
         document_name = request.form['name']
         document = app.documents[document_type]
-        document.create(document_name=document_name,
-                        author_name=session.get('user'),
-                        author_email=session.get('usermail'))
-        return redirect(url_for('edit',
-                                document_type=document_type,
-                                document_name=document_name))
+        if document_name not in document.list_document_ids():
+            document.create(document_name=document_name,
+                            author_name=session.get('user'),
+                            author_email=session.get('usermail'))
+            return redirect(url_for('edit',
+                                    document_type=document_type,
+                                    document_name=document_name))
+        else:
+            flash('Un document porte déjà le même nom !'.decode('utf8'),
+                  'error')
+            return render_template('document_form.html',
+                               document_type=document_type)
 
 
 @app.route('/edit/<string:document_type>/<string:document_name>')

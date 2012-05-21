@@ -16,7 +16,7 @@
   <h2>Vos documents</h2>
   <ul id="doc-list">
   {% for cls in document_classes %}
-    {% set ids = cls.list_document_ids()|list %}
+    {% set ids = cls.list_document_ids()|sort %}
     {% if ids|length > 0 %}
       <li><h3>{{ cls.type_name.capitalize() }}</h3>
         <ul>
