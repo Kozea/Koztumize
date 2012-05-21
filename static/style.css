@@ -186,7 +186,7 @@ section section {
 
 section h2 {
   border-bottom: 1px solid;
-  color: #6b6b6b;
+  color: #444;
   font-family: patinio;
   font-size: 1.8em;
   margin: 25px 5% 30px; 
@@ -734,7 +734,7 @@ form[name=document] {
 section #doc-list>li{
   list-style-type: none;
   float: left;
-  margin-right: 3em;
+  width: 30%;
 }
 
 section #doc-list>li:not(:first-child) {
@@ -743,7 +743,6 @@ section #doc-list>li:not(:first-child) {
 }
 
 section #doc-list>li>h3 {
-  cursor: pointer;
   font-family: patinio;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
   color: #6b6b6b;
@@ -786,6 +785,10 @@ section #doc-list ul.document-info li {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+section #doc-list ul.document-info li:before {
+  content: " - ";
 }
 
 section #doc-list ul ul {
