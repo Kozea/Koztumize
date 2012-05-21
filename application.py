@@ -12,9 +12,4 @@ class Koztumize(Pynuts):
         return self.config['LDAP']
 
 
-CONFIG = {'PYNUTS_DOCUMENT_REPOSITORY': '/tmp/models.git',
-          'LDAP_HOST': 'ldap.keleos.fr',
-          'LDAP_PATH': 'ou=People,dc=keleos,dc=fr'}
-
-
-app = Koztumize(__name__, config=CONFIG)
+app = Koztumize(__name__, config_file='config.cfg')

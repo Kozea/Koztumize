@@ -5,4 +5,4 @@ build
 *.pdf
 static/domain/kozea
 static/domain/keleos
-fondue.py
+config.cfg

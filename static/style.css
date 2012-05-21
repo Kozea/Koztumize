@@ -125,7 +125,7 @@ body> aside.user {
   padding:0;
   position:absolute;
   right:1em;
-  top: 41px;
+  top: 5px;
   z-index: 10;
 }
 
@@ -767,14 +767,25 @@ section #doc-list>li>ul li a:hover{
   text-decoration: underline;
 }
 
-section #doc-list span.document-info {
+section #doc-list>li>ul li a.details {
+  color: #bcbcbc;
+  padding: 0 1px;
+  font-size: 9pt;
+}
+
+section #doc-list ul.document-info {
   font-style: italic;
   font-family: georgia;
   font-size: 0.9em;
+  display: none;
+  padding: 0;
+  margin: 0 2em;
 }
 
-section #doc-list span.document-info:before {
-  content: ' - ';
+section #doc-list ul.document-info li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 section #doc-list ul ul {

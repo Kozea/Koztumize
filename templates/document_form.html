@@ -4,7 +4,7 @@
 <fieldset>
   <legend>Veuillez choisir un nom pour le document :</legend>
   <form action="{{ url_for('create_document', document_type=document_type) }}" method="post" name="document">
-    <input type="text" placeholder="Nom du document" name="name">
+    <input type="text" placeholder="Nom du document" name="name" maxlength="50">
     <input type="submit">
   </form>
 </fieldset>

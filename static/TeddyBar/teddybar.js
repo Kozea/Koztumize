@@ -38,71 +38,15 @@
 				'-4': null,
 				'Annuler': 'undo',
 				'Refaire': 'redo',
-                '-5': null,
-                'Enregistrer le document': 'save',
-                'Générer le PDF': 'pdf'
-			},
-			commands : {
-                'save': function() { 
-					var divs = $('#iframe').contents().find('div[contenteditable]');
-                    var data = [];
-                    $.each(divs, function () {
-                        data.push({
-                            "part": $(this).attr('data-part'),
-                            "document_type": $(this).attr('data-document-type'),
-                            "document_id": $(this).attr('data-document-id'),
-                            "version": $(this).attr('data-document-version'),
-                            "content": $(this).html()
-                        });
-                    });
-                    // Make ajax
-					$.ajax({
-						url: "/save/courrier%20standard",
-						data: JSON.stringify(data),
-						contentType: 'application/json',
-						dataType: 'json',
-						type: "POST",
-						success: function(response){
-						    if(response && response.documents) {
-                                var message = 'Contenu enregistré.';
-                                var div = $('<div>', {'class': 'ok'}).html(message);
-                                $('body>section').before(div);
-                                div.slideDown(300).delay(3000).fadeOut();
-                                $.each(response.documents, function () {
-                                    var divs = $('#iframe').contents().find(
-                                        'div[contenteditable]' +
-                                        '[data-document-type="' + this.document_type + '"]' +
-                                        '[data-document-id="' + this.document_id + '"]'
-                                    );
-                                    divs.attr('data-document-version', this.version);
-                                });
-                            } else {
-                                var message = 'Conflit: Veuillez rafraîchir la page.';
-                                var div = $('<div>', {'class': 'error'}).html(message);
-                                $('body>section').before(div);
-                                div.slideDown(300).delay(3000).fadeOut();
-                            }            
-                        }
-					});			
-				},
-				'pdf': function() {
-				    this.save();
-				    var loader = $('<div>', {'class': 'loading'});
-				    loader.fadeIn(500);
-				    
-				    $.ajax({
-					    url: "/pdf_link/courrier%20standard/Friday",
-					    success: function(response){
-						    $('#loader').hide();
-						    window.location=response;
-					    }
-				    });
-                }
+        '-5': null,
+        'Enregistrer le document': 'save',
+        'Enregistrer le document avec un message': 'save_as',
+        'Générer le PDF': 'pdf'
 			}
 		};
-        if (options) {
+    if (options) {
 		    $.extend(true, config, options);
-        }
+    }
 		return this.each(function () {
 			var $this=$(this);
 			var block = $('<ul>').appendTo($this);
@@ -145,9 +89,9 @@
 			});
        
 			// Puts the body down, according to the toolbar's height
-			$('body').css('margin-top', $this.height());
+			$('body, .user').css('margin-top', $this.height());
 			$(window).resize(function() {
-				$('body').css('margin-top', $this.height());
+				$('body, .user').css('margin-top', $this.height());
 			});
 		});
 	};

@@ -1,3 +1,5 @@
+#! /usr/bin/env python2
+
 import os
 import ldap
 from flask import (render_template, request, redirect, url_for, jsonify,
@@ -44,9 +46,10 @@ def logout():
 @app.route('/')
 @allow_if(Is.connected)
 def index():
+    model_path = app.config['MODELS']
     models = {
-        category: os.listdir(os.path.join('models', category))
-        for category in os.listdir('models')}
+        category: os.listdir(os.path.join(model_path, category))
+        for category in os.listdir(model_path)}
     return render_template('index.html', models=models)
 
 
@@ -101,11 +104,12 @@ def pdf(document_type, document_name):
 
 # AJAX routes
 @app.route('/save/<string:document_type>', methods=('POST', ))
-def save(document_type):
+@app.route('/save/<string:document_type>/<string:message>', methods=('POST', ))
+def save(document_type, message=None):
     document = app.documents[document_type]
     return jsonify(documents=document.update_content(
         request.json, author_name=session.get('user'),
-        author_email=session.get('usermail')))
+        author_email=session.get('usermail'), message=message))
 
 
 @app.route('/pdf_link/<string:document_type>/<string:document_name>')
