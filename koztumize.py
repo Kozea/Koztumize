@@ -4,11 +4,26 @@ import os
 import ldap
 from flask import (render_template, request, redirect, url_for, jsonify,
                    session, current_app, flash)
+import pytz
 from pynuts.rights import allow_if
 from application import app
 import rights as Is
 from document import CourrierStandard
 from directives import Button
+
+import locale
+locale.setlocale(locale.LC_ALL, 'fr_FR')
+
+tz_paris = pytz.timezone('Europe/Paris')
+
+
+@app.template_filter()
+def local_time(datetime):
+    return pytz.utc.localize(datetime).astimezone(tz_paris)
+
+@app.template_filter()
+def strftime(datetime, format):
+    return datetime.strftime(format.encode('utf8')).decode('utf8')
 
 
 @app.errorhandler(403)
