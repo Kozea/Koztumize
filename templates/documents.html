@@ -5,19 +5,28 @@
 {% block head %}
 <script>
   function toggle_info(elmt) {
-    $('ul#' + elmt).toggle();
+      $('ul#' + elmt).toggle();
   }
-  
+  function search_document(document_name) {
+      var documents = [];
+      $.each($('h4>a'), function () {
+          documents.push($(this).html());
+      });
+      var index = $.inArray(document_name, documents);
+      if(index != -1) {
+          $('#doc-list>li>ul>li, #doc-list>li>h3').hide();
+          $('#doc-list>li>ul>li').eq(index).show();
+      } else {
+          $('#doc-list>li>h3, #doc-list>li>ul>li').show();
+          return false;
+      }
+  }
 </script>
-
 {% endblock head %}
-
 
 {% block content %}
   <h2>Documents enregistrés</h2>
-  <form>
-    <input type="text" name="search" placeholder="Rechercher une archive" title="Rechercher une archive" oninput=""/>
-  </form>
+  <input type="text" name="search" placeholder="Rechercher une archive" title="Rechercher une archive" oninput="return search_document($(this).val())"/>
   <ul id="doc-list">
   {% for cls in document_classes %}
     {% set ids = cls.list_document_ids()|sort %}
