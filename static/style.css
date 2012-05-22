@@ -358,13 +358,12 @@ aside.last_commits div a ul li .strong {
 
 /* Search */
 input[name=search]{
-  float:right;
-  margin-top:-6.5em;
-  margin-right:5%;
-  background:#fff;
-  background: url(img/icons/search.png) no-repeat scroll 0 0 transparent;
+  float: right;
+  margin-top: -5em;
+  margin-right: 5%;
+  background: #fff;
+  background: url(img/search.png) no-repeat scroll 0 0 transparent;
   border: medium none;
-  color: ;;
   height: 26px;
   padding-left: 15px;
   width: 230px;
