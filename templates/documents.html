@@ -24,7 +24,7 @@
       <li><h3>{{ cls.type_name.capitalize() }}</h3>
         <ul>
           {% for document_id in ids %}
-            {% set history = cls(document_id).history | list %}
+            {% set history = (cls(document_id).history | list)[:-1] %}
             <li>
               <h4><a href="{{ url_for('edit', document_type=cls.type_name, document_name=document_id) }}">{{ document_id }}</a></h4>
               <ul>

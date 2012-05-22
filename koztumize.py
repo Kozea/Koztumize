@@ -119,11 +119,14 @@ def model(document_name=None, document_type=None, version=None):
 
 
 @app.route('/pdf/<string:document_type>/<string:document_name>')
+@app.route('/pdf/<string:document_type>/<string:document_name>/<version>')
 @allow_if(Is.connected)
-def pdf(document_type, document_name):
-    document = current_app.documents[document_type]
-    return document.download_pdf(
-        document_name=document_name, filename=document_name + '.pdf')
+def pdf(document_type, document_name, version=None):
+    document = app.documents[document_type]
+    return document.download_pdf(document_name=document_name,
+                                 filename=document_name + '.pdf',
+                                 version=version)
+
 
 
 # AJAX routes
