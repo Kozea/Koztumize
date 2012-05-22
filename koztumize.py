@@ -11,6 +11,7 @@ from application import app
 import rights as Is
 from document import CourrierStandard
 from directives import Button
+import brigit
 
 import locale
 locale.setlocale(locale.LC_ALL, 'fr_FR')
@@ -78,7 +79,7 @@ def create_document(document_type=None):
                                document_type=document_type)
     else:
         document_name = request.form['name']
-        document = app.documents[document_type]
+        document = current_app.documents[document_type]
         if document_name not in document.list_document_ids():
             document.create(document_name=document_name,
                             author_name=session.get('user'),
@@ -112,7 +113,7 @@ def documents():
 @app.route('/model/<string:document_type>/<string:document_name>/<version>')
 @allow_if(Is.connected)
 def model(document_name=None, document_type=None, version=None):
-    document = app.documents[document_type]
+    document = current_app.documents[document_type]
     return document.html('model.html', document=document,
                          document_name=document_name, version=version)
 
@@ -120,7 +121,7 @@ def model(document_name=None, document_type=None, version=None):
 @app.route('/pdf/<string:document_type>/<string:document_name>')
 @allow_if(Is.connected)
 def pdf(document_type, document_name):
-    document = app.documents[document_type]
+    document = current_app.documents[document_type]
     return document.download_pdf(
         document_name=document_name, filename=document_name + '.pdf')
 
@@ -129,7 +130,7 @@ def pdf(document_type, document_name):
 @app.route('/save/<string:document_type>', methods=('POST', ))
 @app.route('/save/<string:document_type>/<string:message>', methods=('POST', ))
 def save(document_type, message=None):
-    document = app.documents[document_type]
+    document = current_app.documents[document_type]
     return jsonify(documents=document.update_content(
         request.json, author_name=session.get('user'),
         author_email=session.get('usermail'), message=message))

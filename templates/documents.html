@@ -13,7 +13,10 @@
 
 
 {% block content %}
-  <h2>Vos documents</h2>
+  <h2>Documents enregistrés</h2>
+  <form>
+    <input type="text" name="search" placeholder="Rechercher une archive" title="Rechercher une archive" oninput=""/>
+  </form>
   <ul id="doc-list">
   {% for cls in document_classes %}
     {% set ids = cls.list_document_ids()|sort %}
