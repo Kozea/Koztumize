@@ -296,7 +296,7 @@ aside.last_commits {
   display: inline-block;
   margin: 0px 0 0 8%;
   width: 25%;
-  border:1px solid #eee; 
+  border:1px solid #eee;
 }
 
 aside.last_commits h3 {
@@ -312,47 +312,25 @@ aside.last_commits h3 {
   margin-top:0px;
 }
 
-aside.last_commits #history{
-  border-top:1px solid #eee;
-  margin-bottom:0;
-}
-
-aside.last_commits form {
-  color: #444;
-  font-size: 0.8em;
-  text-align: center;
-  width:80%;
-  margin:auto;
-}
-
-aside.last_commits form select {
-  height: 1.5em;
-  width:50%;
-  background:#fefefe;
-  color:#666;
-  border-radius:2px;
-  border:1px solid #ddd;
-  box-shadow:
-  0px 2px 2px 0px rgba(0, 0, 0, 0.5),
-  0px 2px 2px 0px rgba(255, 255, 255, 0.5) inset;
-  overflow:hidden;
-}
-
 aside.last_commits div {
-  font-size:0.8em;
-  height: 48em;    
-  margin: 1em 0 15px 0;
+  font-size: 0.8em;
+  height: 48em;
   overflow: auto;
   padding: 0 2%;
   width: 96%;
+  margin-top: -1em;
 }
 
-aside.last_commits a:first-child {
-  padding-top: 0;
+aside.last_commits div>ul {
+  padding-left: 0;
+}
+
+aside.last_commits div>ul li{
+  list-style: none;
 }
 
 aside.last_commits div a {
-  border-bottom: 1px solid #949494;
+  border-bottom: 1px dotted #a8a8a8;
   color: #a8a8a8;
   display: block;
 }
@@ -361,10 +339,6 @@ aside.last_commits div a:hover,
 aside.last_commits div a:focus {
   color: #636363;
   text-shadow:rgba(0,0,0,0.75);
-}
-
-aside.last_commits a:last-child {
-  border: none;
 }
 
 aside.last_commits a ul {
@@ -405,18 +379,37 @@ iframe {
   width: 90%;
 }
 
-.dl-pdf {
+ul.options {
   float: right;
   margin: -3.5em 5% 0 0;
-  color: black;
+}
+
+ul.options li{
+  display: inline-block;
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
   font-family: patinio;
+  margin-left: 20px;
+}
+
+ul.options li a {
   display: block;
   padding-left: 30px;
+  color: #666666;
+  background-image: url(img/new_document.svg);
+  background-position: left center;
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+}
+
+ul.options li:first-child a {
   background: url(img/download.png) no-repeat left center;
 }
 
-.dl-pdf:hover {
-  text-decoration: underline;
+ul.options li a:hover {
+  color: #222;
+}
+
+ul.options li a:hover {
   background-position: 5px center;
 }
 

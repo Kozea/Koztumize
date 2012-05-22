@@ -3,6 +3,10 @@
 
 import os
 import ldap
+from urllib import unquote
+from datetime import datetime
+from operator import itemgetter
+from heapq import nlargest
 from flask import (render_template, request, redirect, url_for, jsonify,
                    session, current_app, flash)
 import pytz
@@ -17,6 +21,25 @@ import locale
 locale.setlocale(locale.LC_ALL, 'fr_FR')
 
 tz_paris = pytz.timezone('Europe/Paris')
+
+
+def get_all_commits():
+    repo = current_app.document_repository
+    read_ref = repo.refs.read_ref
+    return (
+        {
+            'message': commit.message.decode('utf-8'),
+            'author': commit.author.decode('utf-8'),
+            'date': datetime.utcfromtimestamp(commit.commit_time),
+            'version': commit.id,
+            'ref': tuple(unquote(ref).split('/', 1))}
+        for ref in repo.refs.keys(base='refs/heads/documents/')
+        for commit in repo.revision_history(
+            read_ref('refs/heads/documents/' + ref))
+    )
+    
+def get_last_commits(n=10):
+    return nlargest(n, get_all_commits(), key=itemgetter('date'))
 
 
 @app.template_filter()
@@ -68,7 +91,8 @@ def index():
     models = {
         category: os.listdir(os.path.join(model_path, category))
         for category in os.listdir(model_path)}
-    return render_template('index.html', models=models)
+    commits = get_last_commits()
+    return render_template('index.html', models=models, commits=commits)
 
 
 @app.route('/create/<string:document_type>', methods=('GET', 'POST'))
