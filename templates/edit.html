@@ -89,7 +89,7 @@
             'id': 'iframe',
             'src': '{{ url_for("model", document_type=document_type, document_name=document_name, version=version) }}'
         });
-        $(document.body).find('h2+a').after(iframe);
+        $(document.body).find('h2+ul').after(iframe);
 
         $('#iframe').load(function(){
             $('iframe').contents().find('div[contenteditable]').removeAttr("contenteditable");
@@ -107,7 +107,10 @@
   <div id="teddybar"></div>
   <h2>{{ document_type }}/{{ document_name }}</h2>
   {% if version %}
-    <a href="{{ url_for('pdf', document_type=document_type, document_name=document_name, version=version) }}" class="dl-pdf">Télécharger en PDF</a>
+    <ul class="options">
+      <li><a href="{{ url_for('pdf', document_type=document_type, document_name=document_name, version=version) }}">Télécharger en PDF</a></li>
+      <li><a href="{{ url_for('edit', document_type=document_type, document_name=document_name) }}">Accéder à la dernière version</a></li>
+    </ul>
   {% else %}
     <iframe id="iframe" src="{{ url_for('model', document_type=document_type, document_name=document_name, version=version) }}"></iframe>
   {% endif %}
