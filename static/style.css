@@ -538,6 +538,27 @@ section #doc-list ul ul {
 section #doc-list ul ul li {
   list-style: circle;
 }
+
+section #search-results {
+  border: thin solid #6b6b6b;
+  width: 50%;
+  margin-left: 25%;
+}
+
+section #search-results:before {
+  content: 'Résultats de la recherche';
+  text-transform: uppercase;
+}
+
+section #search-results a {
+  color: #111;
+  font-family: georgia;
+  cursor: pointer;
+}
+
+section #search-results a:hover {
+  text-decoration: underline;
+}
 /*
   ----------
   - Footer -
