@@ -3,19 +3,18 @@
 
 import os
 import ldap
+import pytz
 from urllib import unquote
 from datetime import datetime
 from operator import itemgetter
 from heapq import nlargest
 from flask import (render_template, request, redirect, url_for, jsonify,
                    session, current_app, flash)
-import pytz
 from pynuts.rights import allow_if
 from application import app
 import rights as Is
 from document import CourrierStandard
 from directives import Button
-import brigit
 
 import locale
 locale.setlocale(locale.LC_ALL, 'fr_FR')
@@ -37,7 +36,8 @@ def get_all_commits():
         for commit in repo.revision_history(
             read_ref('refs/heads/documents/' + ref))
     )
-    
+
+
 def get_last_commits(n=10):
     return nlargest(n, get_all_commits(), key=itemgetter('date'))
 
@@ -150,7 +150,6 @@ def pdf(document_type, document_name, version=None):
     return document.download_pdf(document_name=document_name,
                                  filename=document_name + '.pdf',
                                  version=version)
-
 
 
 # AJAX routes

@@ -38,15 +38,15 @@
 				'-4': null,
 				'Annuler': 'undo',
 				'Refaire': 'redo',
-        '-5': null,
-        'Enregistrer le document': 'save',
-        'Enregistrer le document avec un message': 'save_as',
-        'Générer le PDF': 'pdf'
+                '-5': null,
+                'Enregistrer le document': 'save',
+                'Enregistrer le document avec un message': 'save_as',
+                'Générer le PDF': 'pdf'
 			}
 		};
-    if (options) {
-		    $.extend(true, config, options);
-    }
+        if (options) {
+		        $.extend(true, config, options);
+        }
 		return this.each(function () {
 			var $this=$(this);
 			var block = $('<ul>').appendTo($this);
@@ -87,12 +87,13 @@
 					config.document().execCommand(command,false,'');
 				}
 			});
-       
+            
 			// Puts the body down, according to the toolbar's height
 			$('body, .user').css('margin-top', $this.height());
 			$(window).resize(function() {
 				$('body, .user').css('margin-top', $this.height());
 			});
+			
 		});
 	};
 })(jQuery);
