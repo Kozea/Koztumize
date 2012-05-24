@@ -8,18 +8,41 @@
       $('ul#' + elmt).toggle();
   }
   function search_document(document_name) {
-      var documents = [];
-      $.each($('h4>a'), function () {
-          documents.push($(this).html());
-      });
-      var index = $.inArray(document_name, documents);
-      if(index != -1) {
-          $('#doc-list>li>ul>li, #doc-list>li>h3').hide();
-          $('#doc-list>li>ul>li').eq(index).show();
-      } else {
-          $('#doc-list>li>h3, #doc-list>li>ul>li').show();
-          return false;
+      // Remove results if exist
+      $('#search-results').remove();
+
+      // If no search
+      if(document_name.length == 0) {
+        return false;
       }
+      
+      var documents = [];
+      var index = [];
+      document_name = document_name.toLowerCase();
+      
+      // Get the documents called like the search value
+      $.each($('h4>a'), function () {
+          index.push($(this).html().toLowerCase().indexOf(document_name));
+      });
+      $.each(index, function(i, val) {
+          if(val != -1) {
+              documents.push($('h4').eq(i).html());
+          } 
+      });
+      
+      // Display the results
+      if(documents.length>0) {
+          
+          var list = $('<ul>', {'id': 'search-results'}).html('');
+          $.each(documents, function(i, val) {
+              var li = $('<li>').html(val);
+              list.append(li);
+          });    
+      } else {
+          var list = $('<ul>', {'id': 'search-results'});
+          list.append('<li>Pas de résultats</li>');
+      }
+      $('#doc-list').before(list);      
   }
 </script>
 {% endblock head %}
@@ -56,4 +79,5 @@
     {% endif %}
   {% endfor %}
   </ul>
+  </div>
 {% endblock content %}
