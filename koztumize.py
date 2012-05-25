@@ -119,7 +119,7 @@ def create_document(document_type=None):
 
 
 @app.route('/edit/<string:document_type>/<string:document_name>')
-@app.route('/edit/<string:document_type>/<string:document_name>/<version>')
+@app.route('/view/<string:document_type>/<string:document_name>/<version>')
 @allow_if(Is.connected)
 def edit(document_name=None, document_type=None, version=None):
     return render_template('edit.html', document_type=document_type,

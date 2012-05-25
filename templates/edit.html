@@ -98,6 +98,12 @@
     });});
 </script>
 {% else %}
+<style>
+.definition:empty:before {
+  display: none;
+}
+
+</style>
 <script>
     function callIframe(callback) {
         var iframe = $('<iframe>', {
