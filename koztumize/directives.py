@@ -45,7 +45,7 @@ class Script(Directive):
             self.arguments[0].split('/')
         cls = self.state.document.settings._pynuts.documents[document_type]
         document = cls(document_id, version)
-        path = document.resource_url(os.path.join('javascript', filename))
+        path = document.resource_git_url(os.path.join('javascript', filename))
         content = ('<script src="%s.js" type="text/javascript"></script>'
                    % path)
         return [docutils.nodes.raw('', content, format='html')]
