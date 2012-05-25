@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <aside class="index">
+      {% for document in models.keys() %}  
+      <h2>{{ document }}</h2>
+        {% for model in models[document] %}
+        <ul>
+          <li><a href="{{ url_for('create_document', document_type=model) }}" >{{ model }}</a></li>
+        </ul>
+        {% endfor %}
+      {% endfor %}
+    </aside>
+    <aside class="last_commits">
+      <h3>Dernières modifications</h3>
+      <div>
+        <ul>
+        {% for commit in commits %}
+          <li>
+            <a href="{{ url_for('edit', document_type=commit.ref[0], document_name=commit.ref[1], version=commit.version) }}" class="link">
+              <ul>
+                <li><span class="strong">Auteur :</span> {{ commit.author }}</li>
+                <li><span class="strong">Message :</span> {{ commit.message }}</li>
+                <li><span class="strong">Date :</span> {{ commit.date|local_time|strftime("Le %d %B %Y à %H:%M") }}</li>
+              </ul>
+            </a>
+          </li>
+        {% endfor %}
+        </ul>
+      </div>
+    </aside>
+{% endblock content %}

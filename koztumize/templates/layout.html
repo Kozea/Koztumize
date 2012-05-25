@@ -1,0 +1,48 @@
+<!Doctype html>
+<html>
+  <head>
+    <title>Koztumize {% block title %}{% endblock title %}</title>  
+    <meta charset="UTF-8" />
+    <link href="{{url_for('static',filename='style.css')}}" media="screen" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script> 
+    {% block head %}
+    {% endblock head %}
+  </head>
+  <body>
+    <header><h1><a href="/">Koztumize</a></h1></header>
+    
+    <nav class="nav">
+      <ul>
+        <li><a href="{{ url_for('index')}}" >Créer un nouveau document</a></li>
+        <li><a href="{{ url_for('documents')}}">Accéder à vos documents enregistrés</a></li>
+      </ul>
+    </nav>
+    
+    {% if session.user %}
+    <aside class="user">   
+      <ul>
+        <li id="login">{{ session.user }}</li>
+        <li><a href="{{ url_for('logout') }}">se déconnecter</a></li>
+      </ul>
+    </aside>
+    {% endif %}
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for style,message in messages %}
+        <p class="{{ style }}">{{ message }}</p>
+      {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <section>
+      {% block content %}
+      {% endblock content %}
+    </section>
+    <footer>
+      <ul>
+        <li><a href="http://community.kozea.org/">A Kozea Project</a></li>
+        <li><a href="http://validator.w3.org/check?uri=referer">Optimized for Standards</a></li>
+      </ul>
+    </footer>
+  </body>
+</html>

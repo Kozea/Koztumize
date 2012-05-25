@@ -1,0 +1,633 @@
+@font-face{
+  font-family: 'patinio';
+  src: url('Patinio Futura.ttf');
+}
+
+
+/*
+  -------------
+  - HTML/Body -
+  -------------
+*/
+
+html {
+  background: url(img/wrapper-back.png) repeat-x left 120px,
+              url(img/wrapper.png) no-repeat center 120px, 
+              #1c1c1c;
+  border-top: 5px solid #CA378F;
+}
+
+body{
+  display: block;
+  font-family: trebuchet ms,sans-serif; 
+  height: 100%;
+  margin: 0;
+  min-height: 100%;
+  width: 100%;
+}
+
+
+/*
+  ----------
+  - Common -
+  ----------
+*/
+
+a {
+  text-decoration: none;
+}
+
+:focus {outline:none;}
+::-moz-focus-inner {border:0;}
+
+/* 
+   ----------
+   - Header -
+   ----------
+*/
+
+body>header {
+  background: #1c1c1c url(img/header.png) repeat-x bottom left;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.5);
+  height: 95px;
+  position: relative; 
+  z-index: 5;
+}
+
+body>header h1 {
+  margin: 0 5%;
+  width: 90%;
+}
+
+body>header h1 a {
+  background: url(img/logo.png) no-repeat left 0px;
+  color: transparent;
+  display: block;
+  float: left;
+  height: 145px; 
+  width: 430px;  
+}
+
+
+/* 
+   -------
+   - Nav -
+   -------
+*/
+
+nav {
+  background: -moz-linear-gradient(#f6f6f6 ,#e7e5e5);
+  background: -webkit-linear-gradient(#f6f6f6 ,#e7e5e5);
+  box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.4) inset;
+  margin-top: -16px;
+  padding: 0 2%;
+  position: relative; 
+  text-align: right;
+  z-index: 1;
+}
+
+nav ul {
+  padding: 0;
+}
+
+nav  ul li  {
+  display: inline-block;
+  font-family: patinio;
+  font-size: 0.85em;
+}
+
+nav ul li a {
+  display: block;
+  color: #666;
+  padding: 0.5em 5px; 
+  text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.3);
+}
+
+
+nav ul li a:hover, nav ul li a:focus {
+  color: #222;
+  text-decoration: none;
+}
+
+nav .current a{
+  font-weight:bold;
+  color:#444 ;
+}
+
+/* 
+   ---------
+   - Aside -
+   ---------
+*/
+
+body> aside.user {
+  margin:0;
+  padding:0;
+  position:absolute;
+  right:1em;
+  top: 5px;
+  z-index: 10;
+}
+
+body > aside.user ul {
+  padding: 0; 
+  margin: 0;
+}
+
+body > aside.user ul li {
+  color: #c3c3c3;
+  display:inline-block;
+  font-family: 'patinio';
+  font-size: 0.8em;
+}
+
+body > aside.user ul li a {  
+  background: -moz-linear-gradient(#4f4f4f, #1c1c1c);
+  background: -webkit-linear-gradient(#4f4f4f, #1c1c1c);
+  display: block; 
+  color: #c3c3c3;
+  padding: 0.8em 10px; 
+}
+
+body > aside.user ul li a:hover, body > aside.user ul li a:focus {
+  color: #cb00ac;
+  text-decoration: none;  
+}
+
+
+/* 
+   -----------
+   - Section -
+   -----------
+*/
+
+section {
+  background: white;
+  box-shadow:
+    1px 1px 0 rgba(0, 0, 0, 0.1),
+    4px 4px 0 rgba(255, 255, 255, 1),
+    5px 5px 0 rgba(0, 0, 0, 0.125),
+    8px 8px 0 rgba(255, 255, 255, 1),  
+    9px 9px 0 rgba(0, 0, 0, 0.150),
+    12px 12px 0 rgba(255, 255, 255, 1),  
+    15px 15px 0 rgba(0, 0, 0, 0.175);
+  display: inline-block;
+  margin: 50px 10% 50px; 
+  width: 80%;
+}
+
+section section {
+  background: none; 
+  box-shadow: 0 0 0;
+  margin: 0;
+  padding: 20px 0;
+  width: 100%;
+}
+
+section h2 {
+  border-bottom: 1px solid;
+  color: #444;
+  font-family: patinio;
+  font-size: 1.8em;
+  margin: 25px 5% 30px; 
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+section ul li {
+  list-style: disc;
+  padding: 0.2em 0;
+}
+
+section aside ul li a {
+  color: #4B0040;
+  transform: 0.2s linear;
+}
+
+section aside ul li a:hover, 
+section aside ul li a:focus {
+  color: #980082;
+  transform:  0.2s linear;
+}
+
+
+/*
+  ---------------
+  - Aside index -
+  ---------------
+*/
+aside.index {
+  display: inline-block;
+  float: left;
+  font-size: 0.9em;
+  margin: 0;
+  width: 65%;
+}
+
+aside.index h2 {
+  background: -moz-linear-gradient(#393939 , #1c1c1c);
+  background: -webkit-linear-gradient(#393939 , #1c1c1c);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  color: white;
+  font-family: patinio;  
+  font-size: 1.6em;
+  margin: 25px 10px 5px;
+  padding: 0.15em 10px;
+}
+
+
+/* style for dirs */
+.dir {
+  text-transform:uppercase;
+}
+
+
+/*
+  ------------ 
+  - Messages -
+  ------------
+*/
+p.ok, p.error {
+  background: white;
+  border: 3px solid;
+  border-radius: 5px;
+  font-weight:bold;
+  margin: 35px auto 0;
+  padding: 25px 0 8px;
+  text-align:center;
+  width: 50%;
+}
+
+p.ok:before, p.error:before {
+  color: white;
+  float: left;
+  height: 25px;
+  margin: -25px 0 10px;
+  width: 100%;
+}
+
+p.error {
+  border-color: #6E000D;
+  color:#6E000D;
+}
+
+p.error:before {
+  background: #6E000D;
+  content: 'Attention';
+}
+
+p.ok {
+  border-color: #006E22;
+  color:#006E22;
+}
+
+p.ok:before {
+  background: #006E22;
+  content: 'Information';
+}
+
+
+/* 
+   ----------------
+   - Last commits -
+   ----------------
+*/
+
+aside.last_commits {
+  display: inline-block;
+  margin: 0px 0 0 8%;
+  width: 25%;
+  border:1px solid #eee;
+}
+
+aside.last_commits h3 {
+  background: -moz-linear-gradient(#e4e4e4, #c9c9c9);
+  background: -webkit-linear-gradient(#e4e4e4, #c9c9c9);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
+  color: #6b6b6b;
+  font-size: 1.3em;
+  font-variant: small-caps;
+  font-weight: normal;
+  padding: 0.1em 5px;
+  text-align: center;
+  margin-top:0px;
+}
+
+aside.last_commits div {
+  font-size: 0.8em;
+  height: 48em;
+  overflow: auto;
+  padding: 0 2%;
+  width: 96%;
+  margin-top: -1em;
+}
+
+aside.last_commits div>ul {
+  padding-left: 0;
+}
+
+aside.last_commits div>ul li{
+  list-style: none;
+}
+
+aside.last_commits div a {
+  border-bottom: 1px dotted #a8a8a8;
+  color: #a8a8a8;
+  display: block;
+}
+
+aside.last_commits div a:hover, 
+aside.last_commits div a:focus {
+  color: #636363;
+  text-shadow:rgba(0,0,0,0.75);
+}
+
+aside.last_commits a ul {
+  margin: 1px 0;
+  padding: 4px 8px;
+}
+
+aside.last_commits div a ul li {
+  list-style: none;
+  padding: 0;
+}
+
+aside.last_commits div a ul li .strong {
+  font-weight: bold;
+}
+
+
+/* Search */
+input[name=search]{
+  float: right;
+  margin-top: -5em;
+  margin-right: 5%;
+  background: #fff;
+  background: url(img/search.png) no-repeat scroll 0 0 transparent;
+  border: medium none;
+  height: 26px;
+  padding-left: 15px;
+  width: 230px;
+}
+
+
+/* iframe */
+iframe {
+  background:#fff;
+  border: 1px solid #aaa;
+  height:40em;
+  margin: 15px 5%;
+  width: 90%;
+}
+
+ul.options {
+  float: right;
+  margin: -3.5em 5% 0 0;
+}
+
+ul.options li{
+  display: inline-block;
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+  font-family: patinio;
+  margin-left: 20px;
+}
+
+ul.options li a {
+  display: block;
+  padding-left: 30px;
+  color: #666666;
+  background-image: url(img/new_document.svg);
+  background-position: left center;
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+}
+
+ul.options li:first-child a {
+  background: url(img/download.png) no-repeat left center;
+}
+
+ul.options li a:hover {
+  color: #222;
+}
+
+ul.options li a:hover {
+  background-position: 5px center;
+}
+
+div.ok {
+  height:25px;
+  width:20%;
+  position:fixed;
+  z-index:10000;
+  top:42px;
+  left:40%;
+  font-size:0.9em;
+  background-color: #c6c6c6;
+  padding-top:8px;
+  text-align:center;
+  border-radius:0px 0px 3px 3px;
+  border: thin solid #727272;
+  border-top:none;
+  text-shadow:0 0 1px #dadada outset;
+  color:green;
+}
+div.error {
+  height:25px;
+  width:20%;
+  position:fixed;
+  z-index:10000;
+  top:42px;
+  left:40%;
+  font-size:0.9em;
+  background-color: #c6c6c6;
+  padding-top:8px;
+  text-align:center;
+  border-radius:0px 0px 3px 3px;
+  border: thin solid #727272;
+  text-shadow:0 0 1px #dadada outset;
+  color:red;
+}
+
+/*
+  -------------
+  - Edit Page -
+  -------------
+*/
+fieldset {
+  margin: 1em;
+}
+
+fieldset legend {
+  font-style: italic;
+  font-family: georgia;
+}
+
+form[name=document] {
+  padding: 1em;
+}
+
+/*
+  -------------
+  - Docs Page -
+  -------------
+*/
+
+section #doc-list>li{
+  list-style-type: none;
+  float: left;
+  width: 30%;
+}
+
+section #doc-list>li:not(:first-child) {
+  border-left: thin dotted #6b6b6b;
+  padding-left: 3em;
+}
+
+section #doc-list>li>h3 {
+  font-family: patinio;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+  color: #6b6b6b;
+}
+
+section #doc-list>li>ul{
+  display: block;
+  margin-top: -2em;
+}
+
+section #doc-list>li>ul li {
+  color: #6b6b6b;
+  font-family: georgia;
+}
+
+section #doc-list>li>ul li a{
+  color: #CA378F;
+}
+
+section #doc-list>li>ul li a:hover{
+  text-decoration: underline;
+}
+
+section #doc-list>li>ul li a.details {
+  color: #bcbcbc;
+  padding: 0 1px;
+  font-size: 9pt;
+}
+
+section #doc-list ul.document-info {
+  font-style: italic;
+  font-family: georgia;
+  font-size: 0.9em;
+  display: none;
+  padding: 0;
+  margin: 0 2em;
+}
+
+section #doc-list ul.document-info li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+section #doc-list ul.document-info li:before {
+  content: " - ";
+}
+
+section #doc-list ul ul {
+  margin-top: -1em;
+}
+
+section #doc-list ul ul li {
+  list-style: circle;
+}
+
+section #search-results {
+  border: thin solid #6b6b6b;
+  width: 50%;
+  margin-left: 25%;
+}
+
+section #search-results:before {
+  content: 'Résultats de la recherche';
+  text-transform: uppercase;
+}
+
+section #search-results a {
+  color: #111;
+  font-family: georgia;
+  cursor: pointer;
+}
+
+section #search-results a:hover {
+  text-decoration: underline;
+}
+/*
+  ----------
+  - Footer -
+  ----------
+*/
+
+footer {
+  background: #CA378F;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.5) inset;
+  font-family: 'patinio';
+  font-size: 0.85em;
+  padding: 2px 0;
+  text-align: center;
+}
+
+
+footer li { 
+  display: inline;
+}
+
+footer li a {
+  color: #222 !important;
+  padding: 0 5px;
+}
+
+footer li a:hover {
+  color: black !important;
+}
+
+
+
+section.connection  p {
+  text-align: center;
+}
+
+section.connection form{  
+  font-size: 0.9em;
+  margin: 0 auto 8em auto;
+  width: 20em;
+}
+
+section.connection label {
+  clear: right;
+  color: #8B0077;
+  display: block;
+  float: left;
+  margin: 0 -1px;
+  text-align: right;
+  width: 45%;
+}
+
+section.connection input {
+  border: 1px solid #8B0077;
+  color: #111111;
+  float: right;
+  margin-bottom: 0.5em;
+  width: 50%;
+}
+
+section.connection input[type=submit],
+section.connection input[type=button] {
+	border: 2px solid #222;
+	background: #222;
+	color: #fff;
+	cursor: pointer;
+}
+
+section.connection input[type=submit]:hover, section.connection input[type=submit]:focus,
+section.connection input[type=button]:hover, section.connection input[type=button]:focus {
+	background: #333;
+  border-color: #333;
+}
