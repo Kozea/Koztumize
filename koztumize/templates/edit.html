@@ -12,8 +12,8 @@
                 if(arguments[0]) {
                   message = '/' + arguments[0];
                 }
-                var divs = $('#iframe').contents().find('div[contenteditable]');
                 var data = [];
+                var divs = $('#iframe').contents().find('div[contenteditable]');
                 $.each(divs, function () {
                     data.push({
                         "part": $(this).attr('data-part'),
@@ -23,35 +23,50 @@
                         "content": $(this).html()
                     });
                 });
+                var tables = $('#iframe').contents().find('div[data-content]');
+                $.each(tables, function () {
+                    var spans = $(this).find('span[contenteditable]');
+                    var values = [];
+                    $.each(spans, function () {
+                         values.push($(this).html());
+                    })
+                    data.push({
+                        "part": $(this).attr('data-part'),
+                        "document_type": $(this).attr('data-document-type'),
+                        "document_id": $(this).attr('data-document-id'),
+                        "version": $(this).attr('data-document-version'),
+                        "content": JSON.stringify(values)
+                    });
+                });
                 // Make ajax
-		            $.ajax({
-			            url: "{{ url_for('save', document_type=document_type) }}" + message,
-			            data: JSON.stringify(data),
-			            contentType: 'application/json',
-			            dataType: 'json',
-			            type: "POST",
-			            success: function(response){
-			                if(response && response.documents) {
-                                var message = 'Contenu enregistré.';
-                                var div = $('<div>', {'class': 'ok'}).html(message);
-                                $('body>section').before(div);
-                                div.slideDown(300).delay(3000).fadeOut();
-                                $.each(response.documents, function () {
-                                    var divs = $('#iframe').contents().find(
-                                        'div[contenteditable]' +
-                                        '[data-document-type="' + this.document_type + '"]' +
-                                        '[data-document-id="' + this.document_id + '"]'
-                                    );
-                                    divs.attr('data-document-version', this.version);
-                                });
-                            } else {
-                                var message = 'Conflit: Veuillez rafraîchir la page.';
-                                var div = $('<div>', {'class': 'error'}).html(message);
-                                $('body>section').before(div);
-                                div.slideDown(300).delay(3000).fadeOut();
-                            }            
-                        }
-		            });			
+	            $.ajax({
+		            url: "{{ url_for('save', document_type=document_type) }}" + message,
+		            data: JSON.stringify(data),
+		            contentType: 'application/json',
+		            dataType: 'json',
+		            type: "POST",
+		            success: function(response){
+		                if(response && response.documents) {
+                            var message = 'Contenu enregistré.';
+                            var div = $('<div>', {'class': 'ok'}).html(message);
+                            $('body>section').before(div);
+                            div.slideDown(300).delay(3000).fadeOut();
+                            $.each(response.documents, function () {
+                                var divs = $('#iframe').contents().find(
+                                    'div[contenteditable]' +
+                                    '[data-document-type="' + this.document_type + '"]' +
+                                    '[data-document-id="' + this.document_id + '"]'
+                                );
+                                divs.attr('data-document-version', this.version);
+                            });
+                        } else {
+                            var message = 'Conflit: Veuillez rafraîchir la page.';
+                            var div = $('<div>', {'class': 'error'}).html(message);
+                            $('body>section').before(div);
+                            div.slideDown(300).delay(3000).fadeOut();
+                        }            
+                    }
+	            });			
 	        },
 	        'save_as': function () {
 	          var message = prompt('Message:');
@@ -83,6 +98,12 @@
     });});
 </script>
 {% else %}
+<style>
+.definition:empty:before {
+  display: none;
+}
+
+</style>
 <script>
     function callIframe(callback) {
         var iframe = $('<iframe>', {
@@ -92,7 +113,8 @@
         $(document.body).find('h2+ul').after(iframe);
 
         $('#iframe').load(function(){
-            $('iframe').contents().find('div[contenteditable]').removeAttr("contenteditable");
+            $('iframe').contents().find('*[contenteditable]').removeAttr("contenteditable");
+            $('iframe').contents().find('input[type=button]').remove();
         });
     }
     
