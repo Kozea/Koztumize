@@ -1,3 +1,0 @@
-pynuts
-pytz
-python-ldap
