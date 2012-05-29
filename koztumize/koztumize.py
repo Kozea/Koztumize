@@ -188,13 +188,24 @@ def create_rights():
 def update_rights():
     document_id = request.form['document_id']
     user_id = request.form['user_id']
-    read = request.form['read']
-    write = request.form['write']
+    rights = request.form['rights']
+    if rights == 'r':
+        read = True
+        write = False
+        label_rights = 'Lecture'
+    elif rights == 'w':
+        read = False
+        write = True
+        label_rights = 'Ecriture'
+    else:
+        read = True
+        write = True
+        label_rights = 'Lecture et Ecriture'
     db.session.query(UserRights).filter_by(
         document_id=document_id, user_id=user_id).update(
             read=read, write=write)
     db.session.commit()
-    return jsonify({'user_id': user_id, 'read': read, 'write': write})
+    return jsonify({'label_rights': label_rights, 'rights': rights})
 
 
 @app.route('/delete_rights', methods=('POST',))
