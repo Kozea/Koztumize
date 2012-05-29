@@ -1,6 +1,7 @@
 from flask import session, request
 from application import app
 from pynuts.rights import acl
+from model import db, Rights, UserRights
 
 
 class Context(app.Context):
@@ -16,6 +17,9 @@ class Context(app.Context):
         """Returns the current logged on person, or None."""
         return session.get('user')
 
+    def group(self):
+        return session.get('user_group')
+
 
 @acl
 def connected():
@@ -27,3 +31,31 @@ def connected():
 def admin():
     """Returns whether the user is connected."""
     return session.get('user') == 'admin'
+
+
+@acl
+def in_his_domain():
+    return session.get('user_group') == request.host.split('.')[0]
+
+
+@acl
+def document_owner():
+    document = Rights.query.filter_by(
+        document_id=request.view_args['document_name']).first()
+    return app.context.person == document.owner
+
+
+@acl
+def document_readable():
+    document_id = request.view_args['document_name']
+    user_id = app.context.person
+    document = UserRights.query.filter_by(
+        document_id=document_id, user_id=user_id).first()
+    return document.read or document_owner()
+
+
+@acl
+def document_writable():
+    document = Rights.query.filter_by(
+        document_id=request.view_args['document_name']).first()
+    return document.write or document_owner()

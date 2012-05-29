@@ -19,7 +19,7 @@ html {
 
 body{
   display: block;
-  font-family: trebuchet ms,sans-serif; 
+  font-family: arial, trebuchet ms,sans-serif; 
   height: 100%;
   margin: 0;
   min-height: 100%;
@@ -35,6 +35,7 @@ body{
 
 a {
   text-decoration: none;
+  color: blue;
 }
 
 :focus {outline:none;}
@@ -465,6 +466,97 @@ form[name=document] {
   padding: 1em;
 }
 
+#settings {
+  position: fixed;
+  display: none;
+  width: 20%;
+  left: 40%;
+  top: 43px;
+  background: white;
+  box-shadow: 0px 0px 2px rgba(150,150,150,0.5); 
+  z-index: 1001;
+  border: 2px solid gray;
+  font-size: 0.9em;
+  padding: 5px;
+}
+
+#settings>div {
+  margin-left: 15%;
+}
+
+#settings #allowed-users {
+  padding: 0;
+  margin: 2% 15%;
+  width: 70%;
+  border-collapse: collapse;
+}
+
+#settings #allowed-users td {
+  border-top: thin solid gray;
+  border-bottom: thin solid gray;
+  list-style: none;
+  padding: 5px;
+}
+
+#settings #allowed-users td:first-child {
+  padding-left: 20px;
+  background: white url(img/user.png) no-repeat left;
+  background-size: 16px;
+}
+
+#settings #allowed-users #owner {
+  background: white url(img/administrator.png) no-repeat left;
+  background-size: 16px;
+}
+
+#settings #allowed-users td.rights {
+  margin-left: 50px;
+  font-size: 0.8em;
+  color: #CA378F;
+  font-style: italic;
+}
+
+#settings a.delete-people {
+  color: #222;
+  padding: 1px;
+}
+
+#settings button.add-people {
+  border: none;
+  background: white url(img/add_user.png) no-repeat;
+  background-size: 24px;
+  color: white;
+  cursor: pointer;
+  display: block;
+  width: 90px;
+  height: 24px;
+}
+
+#settings button.add-people:after {
+  content: "Ajouter";
+  margin-left: 30px;
+  font-weight: bold;
+  color: #222;
+}
+
+#settings #users {
+  display: none;
+  border: thin dotted #666;
+  margin-top: 5px;
+  padding: 5px;
+}
+
+#settings #users select[name=user] {
+  border: thin solid #222;
+  background: white;
+}
+
+#settings #users input[type=button] {
+  border: thin solid #CA378F;
+  background: #CA378F;
+  color: white;
+  font-weight: bold;
+}
 /*
   -------------
   - Docs Page -

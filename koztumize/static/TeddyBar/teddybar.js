@@ -41,7 +41,9 @@
                 '-5': null,
                 'Enregistrer le document': 'save',
                 'Enregistrer le document avec un message': 'save_as',
-                'Générer le PDF': 'pdf'
+                'Générer le PDF': 'pdf',
+                '-6': null,
+                'Options': 'settings'
 			}
 		};
         if (options) {
@@ -75,7 +77,6 @@
 				} else {
 					config.document().execCommand(command,false,value);
 				}
-				$(this).children().first().attr('selected','true');
 			});
             
 			// execCommand on input elements

@@ -138,6 +138,11 @@
   background-size: 100% 100%;
 }
 
+#teddybar input.settings {
+  background: url(icons/options.svg) no-repeat;
+  background-size: 100% 100%;
+}
+
 #teddybar select {
   background: transparent;
   color: #333;

@@ -15,6 +15,7 @@ from application import app
 import rights as Is
 from document import CourrierStandard
 from directives import Button
+from model import Users, UserRights, Rights, db
 
 import locale
 locale.setlocale(locale.LC_ALL, 'fr_FR')
@@ -55,6 +56,7 @@ def strftime(datetime, format):
 @app.errorhandler(403)
 @app.route('/login')
 def login(error):
+    flash(u"Vous n'avez pas l'autorisation d'accéder à cette page.", "error")
     return render_template('login.html')
 
 
@@ -74,6 +76,8 @@ def login_post():
         return render_template('login.html')
     session["user"] = user[0][1]['cn'][0].decode('utf-8')
     session["usermail"] = user[0][1].get('mail', ["none"])[0].decode('utf-8')
+    session["user_group"] = user[0][1].get(
+        'o', ["none"])[0].decode('utf-8').lower()
     return redirect(url_for('index'))
 
 
@@ -85,7 +89,7 @@ def logout():
 
 
 @app.route('/')
-@allow_if(Is.connected)
+@allow_if(Is.connected & Is.in_his_domain)
 def index():
     model_path = app.config['MODELS']
     models = {
@@ -120,10 +124,17 @@ def create_document(document_type=None):
 
 @app.route('/edit/<string:document_type>/<string:document_name>')
 @app.route('/view/<string:document_type>/<string:document_name>/<version>')
-@allow_if(Is.connected)
+@allow_if(Is.connected & Is.document_readable)
 def edit(document_name=None, document_type=None, version=None):
+    users = Users.query.all()
+    allowed_users = UserRights.query.filter_by(document_id=document_name).all()
+    owner = Rights.query.filter_by(document_id=document_name).first().owner
+    a = set([user.fullname for user in users if user.employe])
+    b = set([allowed_user.user_id for allowed_user in allowed_users])
+    c = a.difference(b)
     return render_template('edit.html', document_type=document_type,
-                           document_name=document_name, version=version)
+                           document_name=document_name, version=version,
+                           users=users, allowed_users=allowed_users, owner=owner, c=c)
 
 
 @app.route('/documents')
@@ -160,6 +171,40 @@ def save(document_type, message=None):
     return jsonify(documents=document.update_content(
         request.json, author_name=session.get('user'),
         author_email=session.get('usermail'), message=message))
+
+
+@app.route('/create_rights', methods=('POST',))
+def create_rights():
+    document_id = request.form['document_id']
+    user_id = request.form['user_id']
+    read = request.form['read']
+    write = request.form['write']
+    db.session.add(UserRights(document_id, user_id, read, write))
+    db.session.commit()
+    return jsonify({'user_id': user_id, 'read': read, 'write': write})
+
+
+@app.route('/update_rights', methods=('POST',))
+def update_rights():
+    document_id = request.form['document_id']
+    user_id = request.form['user_id']
+    read = request.form['read']
+    write = request.form['write']
+    db.session.query(UserRights).filter_by(
+        document_id=document_id, user_id=user_id).update(
+            read=read, write=write)
+    db.session.commit()
+    return jsonify({'user_id': user_id, 'read': read, 'write': write})
+
+
+@app.route('/delete_rights', methods=('POST',))
+def delete_rights():
+    document_id = request.form['document_id']
+    user_id = request.form['user_id']
+    db.session.query(UserRights).filter_by(
+        document_id=document_id, user_id=user_id).delete()
+    db.session.commit()
+    return user_id
 
 
 @app.route('/pdf_link/<string:document_type>/<string:document_name>')
