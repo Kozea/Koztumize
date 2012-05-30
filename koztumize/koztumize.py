@@ -103,7 +103,7 @@ def index():
     model_path = app.config['MODELS']
     models = {
         category: os.listdir(os.path.join(model_path, category))
-        for category in os.listdir(model_path)}
+        for category in os.listdir(model_path) if category != '.git'}
     commits = get_last_commits()
     return render_template('index.html', models=models, commits=commits)
 
