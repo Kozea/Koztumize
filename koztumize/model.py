@@ -10,7 +10,7 @@ class Rights(db.Model):
     document_id = db.Column(db.Integer, primary_key=True)
     owner = db.Column(db.String(), unique=True)
 
-    def __init__(self, doc_id, owner, read, write):
+    def __init__(self, doc_id, owner):
         self.document_id = doc_id
         self.owner = owner
 

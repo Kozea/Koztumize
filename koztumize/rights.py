@@ -1,7 +1,7 @@
 from flask import session, request
 from application import app
 from pynuts.rights import acl
-from model import db, Rights, UserRights
+from model import Rights, UserRights
 
 
 class Context(app.Context):
@@ -49,13 +49,15 @@ def document_owner():
 def document_readable():
     document_id = request.view_args['document_name']
     user_id = app.context.person
-    document = UserRights.query.filter_by(
+    rights = UserRights.query.filter_by(
         document_id=document_id, user_id=user_id).first()
-    return document.read or document_owner()
+    return (rights and rights.read) or document_owner()
 
 
 @acl
 def document_writable():
-    document = Rights.query.filter_by(
-        document_id=request.view_args['document_name']).first()
-    return document.write or document_owner()
+    document_id = request.view_args['document_name']
+    user_id = app.context.person
+    rights = UserRights.query.filter_by(
+        document_id=document_id, user_id=user_id).first()
+    return (rights and rights.write) or document_owner()

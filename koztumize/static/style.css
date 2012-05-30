@@ -502,6 +502,7 @@ form[name=document] {
   padding-left: 20px;
   background: white url(img/user.png) no-repeat left;
   background-size: 16px;
+  width: 54%;
 }
 
 #settings #allowed-users #owner {
@@ -514,6 +515,66 @@ form[name=document] {
   font-size: 0.8em;
   color: #CA378F;
   font-style: italic;
+  width: 44%;
+}
+
+#settings a.right-select {
+
+}
+
+#settings ul.right-options {
+  padding: 0;
+  margin: 5px 0 0 0;
+  border: thin solid #666;
+  box-shadow: 0px 0px 2px rgba(50,50,50,0.5);
+  position: absolute;
+  z-index: 10;
+  background: white;
+  width: 150px;
+}
+
+#settings ul.right-options:before {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 10px;
+  -moz-transform: rotate(-45deg) translate(5px,-3px);
+  border-top: thin solid #666;
+  border-right: thin solid #666;
+  background: white;
+  position: absolute;
+  left: 50%;
+  margin-left: -60px;  
+}
+
+#settings ul.right-options li {
+  list-style: none;
+  padding: 1px 5px;
+  margin: 0;
+  text-align: left;
+  position: relative;
+  z-index: 10;
+}
+
+#settings ul.right-options li:hover {
+  background: #eaeaea;
+}
+
+#settings ul.right-options li.opt-selected {
+  background: url(img/checkmark.png) no-repeat left center;
+  background-size: 16px;
+}
+
+#settings ul.right-options li.opt-selected a {
+  cursor: default;
+}
+
+#settings ul.right-options li a {
+  color: #222;
+  /*font-size: 0.9em;*/
+  font-style: normal;
+  padding: 2px 20px;
+  margin: 0;
 }
 
 #settings a.delete-people {
@@ -538,6 +599,8 @@ form[name=document] {
   font-weight: bold;
   color: #222;
 }
+
+
 
 #settings #users {
   display: none;

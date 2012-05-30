@@ -11,13 +11,14 @@
         {% endfor %}
       {% endfor %}
     </aside>
+    
     <aside class="last_commits">
       <h3>Dernières modifications</h3>
       <div>
         <ul>
         {% for commit in commits %}
           <li>
-            <a href="{{ url_for('edit', document_type=commit.ref[0], document_name=commit.ref[1], version=commit.version) }}" class="link">
+            <a href="{{ url_for('view', document_type=commit.ref[0], document_name=commit.ref[1], version=commit.version) }}" class="link">
               <ul>
                 <li><span class="strong">Auteur :</span> {{ commit.author }}</li>
                 <li><span class="strong">Message :</span> {{ commit.message }}</li>

@@ -23,6 +23,10 @@ locale.setlocale(locale.LC_ALL, 'fr_FR')
 tz_paris = pytz.timezone('Europe/Paris')
 
 
+class NoPermission(Exception):
+    """TODO"""
+
+
 def get_all_commits():
     repo = current_app.document_repository
     read_ref = repo.refs.read_ref
@@ -36,6 +40,7 @@ def get_all_commits():
         for ref in repo.refs.keys(base='refs/heads/documents/')
         for commit in repo.revision_history(
             read_ref('refs/heads/documents/' + ref))
+        if commit.parents
     )
 
 
@@ -54,10 +59,14 @@ def strftime(datetime, format):
 
 
 @app.errorhandler(403)
-@app.route('/login')
 def login(error):
+    return render_template('login.html'), 403
+
+
+@app.errorhandler(NoPermission)
+def no_permission(error):
     flash(u"Vous n'avez pas l'autorisation d'accéder à cette page.", "error")
-    return render_template('login.html')
+    return redirect(url_for('index'))
 
 
 @app.route('/login', methods=('POST', ))
@@ -112,6 +121,10 @@ def create_document(document_type=None):
             document.create(document_name=document_name,
                             author_name=session.get('user'),
                             author_email=session.get('usermail'))
+            db.session.add(Rights(document_name, session.get('user')))
+            db.session.add(
+                UserRights(document_name, session.get('user'), True, True))
+            db.session.commit()
             return redirect(url_for('edit',
                                     document_type=document_type,
                                     document_name=document_name))
@@ -123,18 +136,28 @@ def create_document(document_type=None):
 
 
 @app.route('/edit/<string:document_type>/<string:document_name>')
-@app.route('/view/<string:document_type>/<string:document_name>/<version>')
-@allow_if(Is.connected & Is.document_readable)
-def edit(document_name=None, document_type=None, version=None):
+@allow_if(Is.connected)
+@allow_if(Is.document_writable, NoPermission)
+def edit(document_name=None, document_type=None):
     users = Users.query.all()
     allowed_users = UserRights.query.filter_by(document_id=document_name).all()
+    allowed_user_ids = [user.user_id for user in allowed_users]
     owner = Rights.query.filter_by(document_id=document_name).first().owner
-    a = set([user.fullname for user in users if user.employe])
-    b = set([allowed_user.user_id for allowed_user in allowed_users])
-    c = a.difference(b)
+    available_users = [
+        user.fullname for user in users if user.employe and
+        user.fullname not in allowed_user_ids]
     return render_template('edit.html', document_type=document_type,
-                           document_name=document_name, version=version,
-                           users=users, allowed_users=allowed_users, owner=owner, c=c)
+                           document_name=document_name,
+                           users=users, allowed_users=allowed_users,
+                           owner=owner, available_users=available_users)
+
+
+@app.route('/view/<string:document_type>/<string:document_name>/<version>')
+@allow_if(Is.connected)
+@allow_if(Is.document_readable, NoPermission)
+def view(document_name=None, document_type=None, version=None):
+    return render_template('view.html', document_type=document_type,
+                           document_name=document_name, version=version)
 
 
 @app.route('/documents')
@@ -202,8 +225,8 @@ def update_rights():
         write = True
         label_rights = 'Lecture et Ecriture'
     db.session.query(UserRights).filter_by(
-        document_id=document_id, user_id=user_id).update(
-            read=read, write=write)
+        document_id=document_id, user_id=user_id).update({
+            'read': read, 'write': write})
     db.session.commit()
     return jsonify({'label_rights': label_rights, 'rights': rights})
 
