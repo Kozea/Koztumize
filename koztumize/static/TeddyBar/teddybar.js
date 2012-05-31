@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-
 (function ($) {
 	$.fn.teddybar = function (options) {
 		var config = {
@@ -67,7 +66,7 @@
 					});
 				}
 			});
-			
+            
 			// execCommand on select elements
 			$('select').change(function() {
 				var command = $(this).attr('data-command');
@@ -75,6 +74,21 @@
 				if (command in config.commands) {
 					config.commands[command](value);
 				} else {
+                    try { config.document().designMode = "on"; } 
+                    catch(e) { }
+                    try {
+                        config.document().execCommand("styleWithCSS", 0, false);
+                    } catch (e) {
+                        try {
+                            config.document().execCommand("useCSS", 0, true);
+                        } catch (e) {
+                            try {
+                                config.document().execCommand('styleWithCSS', false, false);
+                            }
+                            catch (e) {
+                            }
+                        }
+                    }
 					config.document().execCommand(command,false,value);
 				}
 			});
@@ -85,6 +99,21 @@
 				if (command in config.commands) {
 					config.commands[command]();
 				} else {
+                    try { config.document().designMode = "on"; } 
+                    catch(e) { }
+                    try {
+                        config.document().execCommand("styleWithCSS", 0, false);
+                    } catch (e) {
+                        try {
+                            config.document().execCommand("useCSS", 0, true);
+                        } catch (e) {
+                            try {
+                                config.document().execCommand('styleWithCSS', false, false);
+                            }
+                            catch (e) {
+                            }
+                        }
+                    }
 					config.document().execCommand(command,false,'');
 				}
 			});
