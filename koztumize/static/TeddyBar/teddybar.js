@@ -88,13 +88,6 @@
 					config.document().execCommand(command,false,'');
 				}
 			});
-            
-			// Puts the body down, according to the toolbar's height
-			$('body, .user').css('margin-top', $this.height());
-			$(window).resize(function() {
-				$('body, .user').css('margin-top', $this.height());
-			});
-			
 		});
 	};
 })(jQuery);

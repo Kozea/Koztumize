@@ -177,21 +177,21 @@ section {
   width: 80%;
 }
 
+section h2 {
+  border-bottom: 1px solid;
+  color: #444;
+  font-family: patinio;
+  font-size: 1.8em;
+  margin: 25px 5% 30px;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+}
+
 section section {
   background: none; 
   box-shadow: 0 0 0;
   margin: 0;
   padding: 20px 0;
   width: 100%;
-}
-
-section h2 {
-  border-bottom: 1px solid;
-  color: #444;
-  font-family: patinio;
-  font-size: 1.8em;
-  margin: 25px 5% 30px; 
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
 }
 
 section ul li {
@@ -234,6 +234,35 @@ aside.index h2 {
   margin: 25px 10px 5px;
   padding: 0.15em 10px;
 }
+
+aside>ul li{
+  display: inline-block;
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+  font-family: patinio;
+}
+
+aside>ul li a {
+  display: block;
+  padding-left: 30px;
+  color: #666666;
+  background-image: url(img/new_document.svg);
+  background-position: left center;
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  height: 20px;
+  padding-top: 5px;
+  -webkit-transition: linear 0.2s;
+  -moz-transition: linear 0.2s;
+}
+
+aside>ul li a:hover {
+  color: #222;
+}
+
+aside>ul li a:hover {
+  background-position: 5px center;
+}
+
 
 
 /* style for dirs */
@@ -408,10 +437,8 @@ ul.options li:first-child a {
 
 ul.options li a:hover {
   color: #222;
-}
-
-ul.options li a:hover {
   background-position: 5px center;
+  -moz-transition: 0.2s linear;
 }
 
 div.ok {
@@ -419,17 +446,18 @@ div.ok {
   width:20%;
   position:fixed;
   z-index:10000;
-  top:42px;
+  top:0;
   left:40%;
   font-size:0.9em;
-  background-color: #c6c6c6;
+  background-color: white;
   padding-top:8px;
   text-align:center;
   border-radius:0px 0px 3px 3px;
-  border: thin solid #727272;
+  border: thin solid #999;
   border-top:none;
   text-shadow:0 0 1px #dadada outset;
   color:green;
+  box-shadow: 1px 1px 1px #999;
 }
 div.error {
   height:25px;
@@ -539,6 +567,7 @@ form[name=document] {
   width: 10px;
   height: 10px;
   -moz-transform: rotate(-45deg) translate(5px,-3px);
+  -webkit-transform: rotate(-45deg) translate(5px,-3px);
   border-top: thin solid #666;
   border-right: thin solid #666;
   background: white;

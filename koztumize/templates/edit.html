@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 
+{% block title %}
+- {{document_name}}
+{% endblock title %}
+
 {% block head %}
 <script src="http://code.jquery.com/ui/1.8.20/jquery-ui.min.js" type="text/javascript"></script>
 <link href="{{ url_for('static', filename='TeddyBar/teddybar.css') }}" media="screen" type="text/css" rel="stylesheet" />
@@ -216,7 +220,6 @@
 
 {% block content %}
   <div id="teddybar"></div>
-  <h2>{{ document_type }}/{{ document_name }}</h2>
  
   <iframe id="iframe" src="{{ url_for('model', document_type=document_type, document_name=document_name) }}"></iframe>
 

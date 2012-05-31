@@ -1,14 +1,8 @@
 #teddybar {
-  background: -moz-linear-gradient(center bottom, #C6C6C6 0%, #E2E1E2 100%);
-  background: -webkit-linear-gradient(#C6C6C6, #E2E1E2);
-  border: 1px solid #999;
-  border-bottom: 1px solid #727272;
-  box-shadow: 0 0 5px #fff;
+  background: #eee;
+  border-bottom: 1px solid #dedede;
   display: block;
-  left: 0;
   min-height: 40px;
-  position: fixed;
-  top: 0;
   width: 100%;
   z-index: 1000;
 }
