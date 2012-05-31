@@ -66,7 +66,7 @@ def login(error):
 @app.errorhandler(NoPermission)
 def no_permission(error):
     flash(u"Vous n'avez pas l'autorisation d'accéder à cette page.", "error")
-    return redirect(url_for('index'))
+    return redirect(request.referrer)
 
 
 @app.route('/login', methods=('POST', ))
@@ -98,7 +98,7 @@ def logout():
 
 
 @app.route('/')
-@allow_if(Is.connected & Is.in_his_domain)
+@allow_if(Is.connected)
 def index():
     model_path = app.config['MODELS']
     models = {
@@ -146,6 +146,11 @@ def edit(document_name=None, document_type=None):
     available_users = [
         user.fullname for user in users if user.employe and
         user.fullname not in allowed_user_ids]
+
+    #TODO: Add employee id in LDAP or do something better than "append"
+    available_users.append('Philippe Donadieu')
+    available_users.append('Alain Clisson')
+
     return render_template('edit.html', document_type=document_type,
                            document_name=document_name,
                            users=users, allowed_users=allowed_users,
@@ -249,4 +254,4 @@ def pdf_link(document_type, document_name):
 
 if __name__ == '__main__':
     app.secret_key = 'Azerty'
-    app.run(debug=True, threaded=True, host='127.0.0.1', port=5000)
+    app.run(debug=True, threaded=True, host='0.0.0.0', port=5000)
