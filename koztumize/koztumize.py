@@ -116,23 +116,28 @@ def create_document(document_type=None):
                                document_type=document_type)
     else:
         document_name = request.form['name']
-        document = current_app.documents[document_type]
-        if document_name not in document.list_document_ids():
-            document.create(document_name=document_name,
-                            author_name=session.get('user'),
-                            author_email=session.get('usermail'))
-            db.session.add(Rights(document_name, session.get('user')))
-            db.session.add(
-                UserRights(document_name, session.get('user'), True, True))
-            db.session.commit()
-            return redirect(url_for('edit',
-                                    document_type=document_type,
-                                    document_name=document_name))
-        else:
-            flash('Un document porte déjà le même nom !'.decode('utf8'),
-                  'error')
+        if not document_name.replace(" ", ""):
+            flash('Veuillez saisir un nom pour votre document !'.decode(
+                'utf8'), 'error')
             return render_template('document_form.html',
-                               document_type=document_type)
+                                   document_type=document_type)
+        for document in current_app.documents.values():
+            if document_name in document.list_document_ids():
+                flash('Un document porte déjà le même nom !'.decode('utf8'),
+                      'error')
+                return render_template('document_form.html',
+                                       document_type=document_type)
+        document = current_app.documents[document_type]
+        document.create(document_name=document_name,
+                        author_name=session.get('user'),
+                        author_email=session.get('usermail'))
+        db.session.add(Rights(document_name, session.get('user')))
+        db.session.add(
+            UserRights(document_name, session.get('user'), True, True))
+        db.session.commit()
+        return redirect(url_for('edit',
+                                document_type=document_type,
+                                document_name=document_name))
 
 
 @app.route('/edit/<string:document_type>/<string:document_name>')
