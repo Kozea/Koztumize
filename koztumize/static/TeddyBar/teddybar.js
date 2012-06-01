@@ -74,8 +74,6 @@
 				if (command in config.commands) {
 					config.commands[command](value);
 				} else {
-                    try { config.document().designMode = "on"; } 
-                    catch(e) { }
                     try {
                         config.document().execCommand("styleWithCSS", 0, false);
                     } catch (e) {
@@ -99,8 +97,6 @@
 				if (command in config.commands) {
 					config.commands[command]();
 				} else {
-                    try { config.document().designMode = "on"; } 
-                    catch(e) { }
                     try {
                         config.document().execCommand("styleWithCSS", 0, false);
                     } catch (e) {

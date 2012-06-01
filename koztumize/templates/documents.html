@@ -51,32 +51,30 @@
   <h2>Documents enregistrés</h2>
   <input type="text" name="search" placeholder="Rechercher une archive" title="Rechercher une archive" oninput="return search_document($(this).val())"/>
   <ul id="doc-list">
-  {% for cls in document_classes %}
-    {% set ids = cls.list_document_ids()|sort %}
-    {% if ids|length > 0 %}
-      <li><h3>{{ cls.type_name.capitalize() }}</h3>
-        <ul>
-          {% for document_id in ids %}
-            {% set history = (cls(document_id).history | list)[:-1] %}
-            <li>
-              <h4><a href="{{ url_for('edit', document_type=cls.type_name, document_name=document_id) }}">{{ document_id }}</a></h4>
-              <ul>
-                {% for version in history %}
-                  <li>
-                    <a href="{{ url_for('view', document_type=cls.type_name, document_name=document_id, version=version.version) }}">{{ version.datetime|local_time|strftime("Le %d %B %Y à %H:%M") }}</a> 
-                    <a href="javascript:toggle_info('{{ version.version[:7] }}')" class="details">+ détails</a>
-                    <ul id="{{ version.version[:7] }}" class="document-info">
-                      <li>{{ version.message }}</li>
-                      <li>{{ version.author }}</li>
-                    </ul>
-                  </li>
-                {% endfor %}
-              </ul>
-            </li>
-          {% endfor %}
-        </ul>
-      </li>
-    {% endif %}
+  {% for document_type, documents in document_list | groupby("type") %}
+    <li><h3>{{ document_type.capitalize() }}</h3>
+    {% for document in documents %}
+      <ul>
+        <li>
+          <h4>
+            <a{% if session.get('user') in document.users_write %} href="{{ url_for('edit', document_type=document.type, document_name=document.document_id) }}"{% endif %}>{{ document.document_id }}</a>
+          </h4>
+          <ul>
+            {% for version in document.history %}
+              <li>
+                <a{% if session.get('user') in document.users_read %} href="{{ url_for('view', document_type=document.type, document_name=document.document_id, version=version.version) }}"{% endif %}>{{ version.datetime|local_time|strftime("Le %d %B %Y à %H:%M") }}</a>
+                <a href="javascript:toggle_info('{{ version.version[:7] }}')" class="details">+ détails</a>
+                <ul id="{{ version.version[:7] }}" class="document-info">
+                  <li>{{ version.message }}</li>
+                  <li>{{ version.author }}</li>
+                </ul>
+              </li>
+            {% endfor %}
+            </ul>
+        </li>
+      </ul>
+      {% endfor %}
+    </li>
   {% endfor %}
   </ul>
   </div>

@@ -677,13 +677,30 @@ section #doc-list>li>ul{
   margin-top: -2em;
 }
 
-section #doc-list>li>ul li {
+section #doc-list>li>ul>li {
   color: #6b6b6b;
   font-family: georgia;
+  margin-top: 2em;
 }
 
-section #doc-list>li>ul li a{
+section #doc-list>li>ul li h4 a:not([href]) {
+  opacity: 0.3;
+  color: black;
+  text-decoration: none;
+}
+
+section #doc-list>li>ul li h4 a{
   color: #CA378F;
+}
+
+section #doc-list>li>ul li ul a:not([href]) {
+  opacity: 0.3;
+  color: black;
+  text-decoration: none;
+}
+
+section #doc-list>li>ul li ul a{
+  color: blue;
 }
 
 section #doc-list>li>ul li a:hover{

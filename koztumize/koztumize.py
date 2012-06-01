@@ -173,8 +173,29 @@ def view(document_name=None, document_type=None, version=None):
 @app.route('/documents')
 @allow_if(Is.connected)
 def documents():
+    document_classes = app.documents.values()
+    documents = []
+    #users = Users.query.all()
+    for document_class in document_classes:
+        document_ids = document_class.list_document_ids()
+        for document_id in document_ids:
+            users_read = []
+            users_write = []
+            allowed_users = UserRights.query.filter_by(
+                document_id=document_id).all()
+            #allowed_user_ids = [user.user_id for user in allowed_users]
+            for user in allowed_users:
+                if user.read:
+                    users_read.append(user.user_id)
+                if user.write:
+                    users_write.append(user.user_id)
+            documents.append({'document_id': document_id,
+                'users_read': users_read,
+                'users_write': users_write,
+                'type': document_class.type_name,
+                'history': list(document_class(document_id).history)})
     return render_template('documents.html',
-                           document_classes=app.documents.values())
+                           document_list=documents)
 
 
 @app.route('/model/<string:document_type>/<string:document_name>')
