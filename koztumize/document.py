@@ -26,7 +26,7 @@ class CourrierStandard(KozDoc):
 
 class FactureAbonnement(KozDoc):
     def __init__(self, document_id, version=None):
-        super(FactureAbonnement, self).__init__(document_id, version=None)
+        super(FactureAbonnement, self).__init__(document_id, version)
         self.jinja_environment.filters['priceformat'] = priceformat
 
     type_name = 'facture abonnement'
