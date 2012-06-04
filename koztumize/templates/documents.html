@@ -60,7 +60,7 @@
             <a{% if session.get('user') in document.users_write %} href="{{ url_for('edit', document_type=document.type, document_name=document.document_id) }}"{% endif %}>{{ document.document_id }}</a>
           </h4>
           <ul>
-            {% for version in document.history %}
+            {% for version in document.history[:-1] %}
               <li>
                 <a{% if session.get('user') in document.users_read %} href="{{ url_for('view', document_type=document.type, document_name=document.document_id, version=version.version) }}"{% endif %}>{{ version.datetime|local_time|strftime("Le %d %B %Y à %H:%M") }}</a>
                 {% if session.get('user') in document.users_read %}
