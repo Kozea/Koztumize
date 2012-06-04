@@ -714,8 +714,12 @@ section #doc-list>li>ul li h4 a:not([href]) {
   /*margin-left: -20px;*/
 }
 
-section #doc-list>li>ul li h4 a{
+section #doc-list>li>ul li h4 a {
   color: #CA378F;
+}
+
+section #doc-list>li>ul li ul li a:first-child:before{
+  content: "➿ ";
 }
 
 section #doc-list>li>ul li ul a:not([href]) {
@@ -728,10 +732,14 @@ section #doc-list>li>ul li ul a:not([href]) {
   /*margin-left: -20px;*/
 }
 
+section #doc-list>li>ul li ul a:not([href]):first-child:before {
+  content: none;
+}
+
 section #doc-list>li>ul li ul a{
   color: #222;
-  font-style: italic;
 }
+
 
 section #doc-list>li>ul li a:hover{
   text-decoration: underline;
@@ -741,6 +749,7 @@ section #doc-list>li>ul li a.details {
   color: #bcbcbc;
   padding: 0 1px;
   font-size: 9pt;
+  font-style: italic;
 }
 
 section #doc-list ul.document-info {
@@ -764,6 +773,7 @@ section #doc-list ul.document-info li:before {
 
 section #doc-list ul ul {
   margin-top: -1em;
+  margin-left: -1em;
 }
 
 section #doc-list ul ul li {
