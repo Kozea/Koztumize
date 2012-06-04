@@ -1,0 +1,57 @@
+<div>Qui a accès</div>
+<table id="allowed-users">
+  <tbody>
+  {% for allowed_user in allowed_users %}
+    <tr data-user="{{ allowed_user.user_id }}">
+      <td {% if allowed_user.user_id == owner %} id="owner" {% endif %}>{{ allowed_user.user_id }}</td>
+      {% if allowed_user.user_id == owner %}
+        <td class="rights">Propriétaire</td>
+      {% elif allowed_user.read and not allowed_user.write %}            
+        <td class="rights">
+        {% if session.get('user') == owner %}
+          <a class="update-people" href="javascript:" onclick="display_right_options('{{ document_name }}', '{{ allowed_user.user_id }}')" data-rights="r">Lecture</a>
+        {% else %}
+          Lecture
+        {% endif %}
+        </td>
+      {% elif not allowed_user.read and allowed_user.write %}
+        <td class="rights">
+        {% if session.get('user') == owner %}
+          <a class="update-people" href="javascript:" onclick="display_right_options('{{ document_name }}', '{{ allowed_user.user_id }}')" data-rights="w">Ecriture</a>
+        {% else %}
+          Ecriture
+        {% endif %}
+        </td>
+      {% else %}
+        <td class="rights">
+        {% if session.get('user') == owner %}
+          <a class="update-people" href="javascript:" onclick="display_right_options('{{ document_name }}', '{{ allowed_user.user_id }}')" data-rights="rw">Lecture et Ecriture</a>
+        {% else %}
+          Lecture et Ecriture
+        {% endif %}
+        </td>
+      {% endif %} 
+      {% if session.get('user') == owner and not allowed_user.user_id == owner %} 
+        <td>
+          <a class="delete-people" href="javascript:" onclick="delete_rights('{{ document_name }}', '{{ allowed_user.user_id }}');">x</a>
+        </td> 
+      {% else %}
+        <td></td>
+      {% endif %}
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% if session.get('user') == owner %}
+  <button class="add-people"></button>
+  <form method="post" id="users">
+    <select name="user">
+    {% for user in available_users %}
+      <option value="{{ user }}">{{ user }}</option>
+    {% endfor %}
+    </select>
+    <input type="checkbox" name="r" id="check-read"><label for="check-read">Lecture</label>
+    <input type="checkbox" name="w" id="check-write"><label for="check-write">Ecriture</label>
+    <input type="button" value="Valider">
+  </form>
+{% endif %}

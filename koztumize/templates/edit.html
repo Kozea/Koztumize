@@ -98,30 +98,36 @@
 			            window.location=response;
 		            }
 	            });
-            },
-            'settings': function () {
-	          $('#settings').toggle();
-	          
+          },
+          'settings': function () {
+              $('#settings').toggle();
 	        },
-	        'pdf': function() {
-	            var loader = $('<div>', {'class': 'loading'});
-	            loader.fadeIn(500);
-	            
-	            $.ajax({
-		            url:"{{ url_for('pdf_link', document_type=document_type, document_name=document_name) }}",
-		            success: function(response){
-			            $('#loader').hide();
-			            window.location=response;
-		            }
-	            });
-            }
+          'pdf': function() {
+              var loader = $('<div>', {'class': 'loading'});
+              loader.fadeIn(500);
+
+              $.ajax({
+                url:"{{ url_for('pdf_link', document_type=document_type, document_name=document_name) }}",
+                success: function(response){
+                  $('#loader').hide();
+                  window.location=response;
+                }
+              });
+          }
         }
       });
-		  $( "#settings" ).draggable();
-		  $('.add-people').click(function () {
+      
+      // Create settings div
+      settings = $('<div>', {'id': 'settings'});   
+      settings.load("{{ url_for('read_rights')}}", {'document_id': '{{ document_name }}'});
+      settings.draggable();
+      $('#teddybar .settings').after(settings).show();
+	    
+		  $('body').on('click', '.add-people', function () {
 		    $('#users').toggle(200);
 		  });
-		  $('#users').find('input[type=button]').click(function() {
+		  
+		  $('body').on('click', '#users input[type=button]', function() {
 		      read = $('input[name=r]').is(':checked');
 		      write = $('input[name=w]').is(':checked');
 		      if(read === false && write === false) {
@@ -155,11 +161,12 @@
 		              }
 		          }
 		      });
-		  });
+		  }); 
 		  if($('select[name=user]').find('option').length == 0) {
           $('#users, .add-people').hide();
       }
-    });
+    });// end $(function())
+    
     function display_right_options(document_id, user_id) {
         var link = $('tr[data-user="' + user_id + '"]').find('.update-people');
         link.toggleClass('right-select');
@@ -209,9 +216,9 @@
               $('#allowed-users').find('tr[data-user="' + user_id + '"]').remove();
               option = $('<option>', {'value': user_id}).html(user_id);
               $('select[name=user]').append(option);
-              if($('select[name=user]').is(':hidden')) {
+              /*if($('select[name=user]').is(':hidden')) {
                   $('#users, .add-people').show();
-              }
+              }*/
             }
         });
     }
@@ -222,66 +229,6 @@
   <div id="teddybar"></div>
  
   <iframe id="iframe" src="{{ url_for('model', document_type=document_type, document_name=document_name) }}"></iframe>
-
-  <div id="settings">
-    <div>Qui a accès</div>
-    <table id="allowed-users">
-      <tbody>
-      {% for allowed_user in allowed_users %}
-        <tr data-user="{{ allowed_user.user_id }}">
-          <td {% if allowed_user.user_id == owner %} id="owner" {% endif %}>{{ allowed_user.user_id }}</td>
-          {% if allowed_user.user_id == owner %}
-            <td class="rights">Propriétaire</td>
-          {% elif allowed_user.read and not allowed_user.write %}            
-            <td class="rights">
-            {% if session.get('user') == owner %}
-              <a class="update-people" href="javascript:" onclick="display_right_options('{{ document_name }}', '{{ allowed_user.user_id }}')" data-rights="r">Lecture</a>
-            {% else %}
-              Lecture
-            {% endif %}
-            </td>
-          {% elif not allowed_user.read and allowed_user.write %}
-            <td class="rights">
-            {% if session.get('user') == owner %}
-              <a class="update-people" href="javascript:" onclick="display_right_options('{{ document_name }}', '{{ allowed_user.user_id }}')" data-rights="w">Ecriture</a>
-            {% else %}
-              Ecriture
-            {% endif %}
-            </td>
-          {% else %}
-            <td class="rights">
-            {% if session.get('user') == owner %}
-              <a class="update-people" href="javascript:" onclick="display_right_options('{{ document_name }}', '{{ allowed_user.user_id }}')" data-rights="rw">Lecture et Ecriture</a>
-            {% else %}
-              Lecture et Ecriture
-            {% endif %}
-            </td>
-          {% endif %} 
-          {% if session.get('user') == owner and not allowed_user.user_id == owner %} 
-            <td>
-              <a class="delete-people" href="javascript:" onclick="delete_rights('{{ document_name }}', '{{ allowed_user.user_id }}');">x</a>
-            </td> 
-          {% else %}
-            <td></td>
-          {% endif %}
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-    {% if session.get('user') == owner %}
-      <button class="add-people"></button>
-      <form method="post" id="users">
-        <select name="user">
-        {% for user in available_users %}
-          <option value="{{ user }}">{{ user }}</option>
-        {% endfor %}
-        </select>
-        <input type="checkbox" name="r" id="check-read"><label for="check-read">Lecture</label>
-        <input type="checkbox" name="w" id="check-write"><label for="check-write">Ecriture</label>
-        <input type="button" value="Valider">
-      </form>
-    {% endif %}
-  </div>
 
 {% endblock content %}
 

@@ -144,17 +144,8 @@ def create_document(document_type=None):
 @allow_if(Is.connected)
 @allow_if(Is.document_writable, NoPermission)
 def edit(document_name=None, document_type=None):
-    users = Users.query.all()
-    allowed_users = UserRights.query.filter_by(document_id=document_name).all()
-    allowed_user_ids = [user.user_id for user in allowed_users]
-    owner = Rights.query.filter_by(document_id=document_name).first().owner
-    available_users = [
-        user.fullname for user in users if user.employe and
-        user.fullname not in allowed_user_ids]
-    return render_template('edit.html', document_type=document_type,
-                           document_name=document_name,
-                           users=users, allowed_users=allowed_users,
-                           owner=owner, available_users=available_users)
+    return render_template(
+        'edit.html', document_type=document_type, document_name=document_name)
 
 
 @app.route('/view/<string:document_type>/<string:document_name>/<version>')
@@ -232,6 +223,21 @@ def create_rights():
     db.session.commit()
     return jsonify({'user_id': user_id, 'read': read, 'write': write})
 
+
+@app.route('/read_rights', methods=('POST',))
+def read_rights():
+    document_name = request.form['document_id']
+    users = Users.query.all()
+    allowed_users = UserRights.query.filter_by(document_id=document_name).all()
+    allowed_user_ids = [user.user_id for user in allowed_users]
+    owner = Rights.query.filter_by(document_id=document_name).first().owner
+    available_users = [
+        user.fullname for user in users if user.employe and
+        user.fullname not in allowed_user_ids]
+    return render_template('rights.html', document_name=document_name,
+                           users=users, allowed_users=allowed_users,
+                           owner=owner, available_users=available_users)
+ 
 
 @app.route('/update_rights', methods=('POST',))
 def update_rights():
