@@ -10,6 +10,7 @@ from operator import itemgetter
 from heapq import nlargest
 from flask import (render_template, request, redirect, url_for, jsonify,
                    session, current_app, flash)
+from pynuts.document import InvalidId
 from pynuts.rights import allow_if
 from application import app
 import rights as Is
@@ -108,7 +109,7 @@ def index():
     return render_template('index.html', models=models, commits=commits)
 
 
-@app.route('/create/<string:document_type>', methods=('GET', 'POST'))
+@app.route('/create/<document_type>', methods=('GET', 'POST'))
 @allow_if(Is.connected)
 def create_document(document_type=None):
     if request.method == 'GET':
@@ -128,9 +129,15 @@ def create_document(document_type=None):
                 return render_template('document_form.html',
                                        document_type=document_type)
         document = current_app.documents[document_type]
-        document.create(document_name=document_name,
-                        author_name=session.get('user'),
-                        author_email=session.get('usermail'))
+        try:
+            document.create(document_name=document_name,
+                            author_name=session.get('user'),
+                            author_email=session.get('usermail'))
+        except InvalidId:
+            flash('Erreur, veuillez ne pas mettre de "/" dans \
+                  le nom de votre document.', 'error')
+            return redirect(url_for(
+                'create_document', document_type=document_type))
         db.session.add(Rights(document_name, session.get('user')))
         db.session.add(
             UserRights(document_name, session.get('user'), True, True))
@@ -140,7 +147,7 @@ def create_document(document_type=None):
                                 document_name=document_name))
 
 
-@app.route('/edit/<string:document_type>/<string:document_name>')
+@app.route('/edit/<document_type>/<path:document_name>')
 @allow_if(Is.connected)
 @allow_if(Is.document_writable, NoPermission)
 def edit(document_name=None, document_type=None):
@@ -148,7 +155,7 @@ def edit(document_name=None, document_type=None):
         'edit.html', document_type=document_type, document_name=document_name)
 
 
-@app.route('/view/<string:document_type>/<string:document_name>/<version>')
+@app.route('/view/<document_type>/<path:document_name>/<version>')
 @allow_if(Is.connected)
 @allow_if(Is.document_readable, NoPermission)
 def view(document_name=None, document_type=None, version=None):
@@ -184,8 +191,8 @@ def documents():
                            document_list=documents)
 
 
-@app.route('/model/<string:document_type>/<string:document_name>')
-@app.route('/model/<string:document_type>/<string:document_name>/<version>')
+@app.route('/model/<document_type>/<path:document_name>/head')
+@app.route('/model/<document_type>/<path:document_name>/<version>')
 @allow_if(Is.connected)
 def model(document_name=None, document_type=None, version=None):
     document = current_app.documents[document_type]
@@ -193,8 +200,8 @@ def model(document_name=None, document_type=None, version=None):
                          document_name=document_name, version=version)
 
 
-@app.route('/pdf/<string:document_type>/<string:document_name>')
-@app.route('/pdf/<string:document_type>/<string:document_name>/<version>')
+@app.route('/pdf/<document_type>/<path:document_name>')
+@app.route('/pdf/<document_type>/<path:document_name>/<version>')
 @allow_if(Is.connected)
 def pdf(document_type, document_name, version=None):
     document = app.documents[document_type]
@@ -204,8 +211,8 @@ def pdf(document_type, document_name, version=None):
 
 
 # AJAX routes
-@app.route('/save/<string:document_type>', methods=('POST', ))
-@app.route('/save/<string:document_type>/<string:message>', methods=('POST', ))
+@app.route('/save/<document_type>', methods=('POST', ))
+@app.route('/save/<document_type>/<message>', methods=('POST', ))
 def save(document_type, message=None):
     document = current_app.documents[document_type]
     return jsonify(documents=document.update_content(
