@@ -496,14 +496,31 @@ form[name=document] {
 
 #settings {
   position: absolute;
+  margin-top: 5px;
+  margin-left: -5px;
   display: none;
-  width: 350px;
+  width: 400px;
   background: white;
   box-shadow: 0px 0px 2px rgba(150,150,150,0.5); 
   z-index: 1001;
   border: 2px solid gray;
-  font-size: 0.9em;
+  font-size: 11pt;
   padding: 5px;
+}
+
+#settings:before {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 10px;
+  -moz-transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+  border-top: 2px solid gray;
+  border-right: 2px solid gray;
+  background: white;
+  position: absolute;
+  margin-left: 10px;
+  margin-top: -12px;
 }
 
 #settings>div {
@@ -512,8 +529,8 @@ form[name=document] {
 
 #settings #allowed-users {
   padding: 0;
-  margin: 2% 15%;
-  width: 70%;
+  margin: 2% 10%;
+  width: 80%;
   border-collapse: collapse;
 }
 
@@ -556,7 +573,7 @@ form[name=document] {
   position: absolute;
   z-index: 10;
   background: white;
-  width: 150px;
+  width: 170px;
 }
 
 #settings ul.right-options:before {
@@ -581,6 +598,7 @@ form[name=document] {
   text-align: left;
   position: relative;
   z-index: 10;
+  width: 160px;
 }
 
 #settings ul.right-options li:hover {
@@ -610,20 +628,22 @@ form[name=document] {
 }
 
 #settings button.add-people {
+  margin: 10px 0 7px 0;
   border: none;
   background: white url(img/add_user.png) no-repeat;
-  background-size: 24px;
+  background-size: 20px;
   color: white;
   cursor: pointer;
   display: block;
   width: 90px;
-  height: 24px;
+  height: 20px;
 }
 
 #settings button.add-people:after {
   content: "Ajouter";
-  margin-left: 30px;
+  margin-left: 20px;
   font-weight: bold;
+  font-size: 10pt;
   color: #222;
 }
 
@@ -639,6 +659,7 @@ form[name=document] {
 #settings #users select[name=user] {
   border: thin solid #222;
   background: white;
+  /*font-size: 9pt;*/
 }
 
 #settings #users input[type=button] {
@@ -646,6 +667,7 @@ form[name=document] {
   background: #CA378F;
   color: white;
   font-weight: bold;
+  width: 65px;
 }
 /*
   -------------
@@ -677,7 +699,7 @@ section #doc-list>li>ul{
 
 section #doc-list>li>ul>li {
   color: #6b6b6b;
-  font-family: georgia;
+  font-family: helvetica,georgia;
   margin-top: 2em;
   list-style: none;
 }
@@ -707,7 +729,8 @@ section #doc-list>li>ul li ul a:not([href]) {
 }
 
 section #doc-list>li>ul li ul a{
-  color: blue;
+  color: #222;
+  font-style: italic;
 }
 
 section #doc-list>li>ul li a:hover{

@@ -5,7 +5,6 @@
 {% endblock title %}
 
 {% block head %}
-<script src="http://code.jquery.com/ui/1.8.20/jquery-ui.min.js" type="text/javascript"></script>
 <link href="{{ url_for('static', filename='TeddyBar/teddybar.css') }}" media="screen" type="text/css" rel="stylesheet" />
 <script src="{{ url_for('static', filename='TeddyBar/teddybar.js') }}" type="text/javascript"></script>
 <script>
@@ -120,7 +119,6 @@
       // Create settings div
       settings = $('<div>', {'id': 'settings'});   
       settings.load("{{ url_for('read_rights')}}", {'document_id': '{{ document_name }}'});
-      settings.draggable();
       $('#teddybar .settings').after(settings).show();
 	    
 		  $('body').on('click', '.add-people', function () {

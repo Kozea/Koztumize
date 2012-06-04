@@ -7,7 +7,7 @@
   z-index: 1000;
 }
 
-#teddybar ul {
+#teddybar>ul {
   border-right: 1px solid #ececec;
   border-left: 1px solid #bfbfbf;
   list-style: none;
@@ -17,15 +17,15 @@
   height: 32px;
 }
 
-#teddybar ul:last-child {
+#teddybar>ul:last-child {
   border-right: none;
 }
 
-#teddybar li {
+#teddybar>ul li {
   display: inline-block;
 }
 
-#teddybar li > input {
+#teddybar>ul li > input {
   width: 32px;
   height: 32px;
   cursor: pointer;
@@ -33,16 +33,16 @@
   font-size: 0;
 }
 
-#teddybar li > input::-moz-focus-inner {
+#teddybar>ul li > input::-moz-focus-inner {
   border: 0;
 }
 
-#teddybar li > input:hover,
-#teddybar li > input:focus {
+#teddybar>ul li > input:hover,
+#teddybar>ul li > input:focus {
   background-color: rgba(255, 255, 255, 0.3);
 }
 
-#teddybar li > input:active {
+#teddybar>ul li > input:active {
   box-shadow:
   0px 2px 2px rgba(0, 0, 0, 0.5) inset,
   0px 2px 2px rgba(255, 255, 255, 0.5);
@@ -137,7 +137,7 @@
   background-size: 100% 100%;
 }
 
-#teddybar select {
+#teddybar>ul>li>select {
   background: transparent;
   color: #333;
   font-size: 0.9em;
