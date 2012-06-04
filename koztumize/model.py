@@ -1,7 +1,6 @@
 from application import app
 from flask.ext.sqlalchemy import SQLAlchemy
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+psycopg2://koztumize:koztumize@macaron/koztumize"
 
 db = SQLAlchemy(app)
 

@@ -158,11 +158,6 @@ def edit(document_name=None, document_type=None):
     available_users = [
         user.fullname for user in users if user.employe and
         user.fullname not in allowed_user_ids]
-
-    #TODO: Add employee id in LDAP or do something better than "append"
-    available_users.append('Philippe Donadieu')
-    available_users.append('Alain Clisson')
-
     return render_template('edit.html', document_type=document_type,
                            document_name=document_name,
                            users=users, allowed_users=allowed_users,
