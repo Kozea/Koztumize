@@ -681,12 +681,17 @@ section #doc-list>li>ul>li {
   color: #6b6b6b;
   font-family: georgia;
   margin-top: 2em;
+  list-style: none;
 }
 
 section #doc-list>li>ul li h4 a:not([href]) {
   opacity: 0.3;
   color: black;
   text-decoration: none;
+  background: url(img/lock.png) no-repeat -1px center;
+  background-size: 16px;
+  padding: 20px;
+  /*margin-left: -20px;*/
 }
 
 section #doc-list>li>ul li h4 a{
@@ -697,6 +702,10 @@ section #doc-list>li>ul li ul a:not([href]) {
   opacity: 0.3;
   color: black;
   text-decoration: none;
+  background: url(img/lock.png) no-repeat -1px center;
+  background-size: 12px;
+  padding: 20px;
+  /*margin-left: -20px;*/
 }
 
 section #doc-list>li>ul li ul a{
@@ -737,7 +746,7 @@ section #doc-list ul ul {
 }
 
 section #doc-list ul ul li {
-  list-style: circle;
+  list-style: none;
 }
 
 section #search-results {
