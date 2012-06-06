@@ -77,8 +77,7 @@ def create_document(document_type=None):
                             author_name=session.get('user'),
                             author_email=session.get('usermail'))
         except InvalidId:
-            flash('Erreur, veuillez ne pas mettre de "/" dans \
-                  le nom de votre document.', 'error')
+            flash('Erreur, veuillez ne pas mettre de "/" dans le nom de votre document.', 'error')
             return redirect(url_for(
                 'create_document', document_type=document_type))
         db.session.add(Rights(document_name, session.get('user')))
@@ -176,15 +175,15 @@ def create_rights():
 
 @app.route('/read_rights', methods=('POST',))
 def read_rights():
-    document_name = request.form['document_id']
+    document_id = request.form['document_id']
     users = Users.query.all()
-    allowed_users = UserRights.query.filter_by(document_id=document_name).all()
+    allowed_users = UserRights.query.filter_by(document_id=document_id).all()
     allowed_user_ids = [user.user_id for user in allowed_users]
-    owner = Rights.query.filter_by(document_id=document_name).first().owner
+    owner = Rights.query.filter_by(document_id=document_id).first().owner
     available_users = [
         user.fullname for user in users if user.employe and
         user.fullname not in allowed_user_ids]
-    return render_template('rights.html', document_name=document_name,
+    return render_template('rights.html', document_name=document_id,
                            users=users, allowed_users=allowed_users,
                            owner=owner, available_users=available_users)
  

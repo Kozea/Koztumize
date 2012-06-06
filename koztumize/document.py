@@ -24,6 +24,12 @@ class CourrierStandard(KozDoc):
     document_id_template = '{document_name}'
 
 
+class Test(KozDoc):
+    type_name = 'test'
+    model_path = os.path.join(
+        app.config['MODELS'], 'Test', 'test')
+    document_id_template = '{document_name}'
+
 class FactureAbonnement(KozDoc):
     def __init__(self, document_id, version=None):
         super(FactureAbonnement, self).__init__(document_id, version)

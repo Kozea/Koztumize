@@ -40,12 +40,12 @@ def get_last_commits(n=10):
 
 @app.template_filter()
 def local_time(datetime):
-    return pytz.utc.localize(datetime).astimezone(tz_paris)
+    return pytz.utc.localize(datetime).astimezone(tz_paris) # pragma: no cover
 
 
-@app.template_filter()
+@app.template_filter() 
 def strftime(datetime, format):
-    return datetime.strftime(format.encode('utf8')).decode('utf8')
+    return datetime.strftime(format.encode('utf8')).decode('utf8') # pragma: no cover
 
 
 @app.errorhandler(403)
@@ -56,4 +56,4 @@ def login(error):
 @app.errorhandler(NoPermission)
 def no_permission(error):
     flash(u"Vous n'avez pas l'autorisation d'accéder à cette page.", "error")
-    return redirect(request.referrer)
+    return redirect('/')

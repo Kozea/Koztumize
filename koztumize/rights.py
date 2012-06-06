@@ -17,9 +17,6 @@ class Context(app.Context):
         """Returns the current logged on person, or None."""
         return session.get('user')
 
-    def group(self):
-        return session.get('user_group')
-
 
 @acl
 def connected():
@@ -27,22 +24,22 @@ def connected():
     return app.context.person is not None
 
 
-@acl
-def admin():
-    """Returns whether the user is connected."""
-    return session.get('user') == 'admin'
+#@acl
+#def admin():
+#    """Returns whether the user is connected."""
+#    return session.get('user') == 'admin'
 
 
-@acl
-def in_his_domain():
-    return session.get('user_group') == request.host.split('.')[0]
+#@acl
+#def in_his_domain():
+#    return session.get('user_group') == request.host.split('.')[0]
 
 
-@acl
-def document_owner():
-    document = Rights.query.filter_by(
-        document_id=request.view_args['document_name']).first()
-    return app.context.person == document.owner
+#@acl
+#def document_owner():
+#    document = Rights.query.filter_by(
+#        document_id=request.view_args['document_name']).first()
+#    return app.context.person == document.owner
 
 
 @acl
@@ -51,7 +48,7 @@ def document_readable():
     user_id = app.context.person
     rights = UserRights.query.filter_by(
         document_id=document_id, user_id=user_id).first()
-    return (rights and rights.read) or document_owner()
+    return rights and rights.read
 
 
 @acl
@@ -60,4 +57,4 @@ def document_writable():
     user_id = app.context.person
     rights = UserRights.query.filter_by(
         document_id=document_id, user_id=user_id).first()
-    return (rights and rights.write) or document_owner()
+    return rights and rights.write
