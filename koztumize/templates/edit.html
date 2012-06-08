@@ -5,164 +5,169 @@
 {% endblock title %}
 
 {% block head %}
-<link href="{{ url_for('static', filename='TeddyBar/teddybar.css') }}" media="screen" type="text/css" rel="stylesheet" />
-<script src="{{ url_for('static', filename='TeddyBar/teddybar.js') }}" type="text/javascript"></script>
+<link href="{{ url_for('_pynuts-static', filename='javascript/TeddyBar/teddybar.css') }}" media="screen" type="text/css" rel="stylesheet" />
+<script src="{{ url_for('_pynuts-static', filename='javascript/TeddyBar/teddybar.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('_pynuts-static', filename='javascript/save.js') }}" type="text/javascript"></script>
 <script>
-    $(function () { 
-      $('#teddybar').teddybar({
-        commands : {
-            'save': function() { 
-                var message = '';
-                if(arguments[0]) {
-                  message = '/' + arguments[0];
-                }
-                var data = [];
-                var divs = $('#iframe').contents().find('div[contenteditable]');
-                $.each(divs, function () {
-                    data.push({
-                        "part": $(this).attr('data-part'),
-                        "document_type": $(this).attr('data-document-type'),
-                        "document_id": $(this).attr('data-document-id'),
-                        "version": $(this).attr('data-document-version'),
-                        "content": $(this).html()
-                    });
-                });
-                var tables = $('#iframe').contents().find('div[data-content]');
-                $.each(tables, function () {
-                    var spans = $(this).find('span[contenteditable]');
-                    var values = [];
-                    $.each(spans, function () {
-                         values.push($(this).html());
-                    })
-                    data.push({
-                        "part": $(this).attr('data-part'),
-                        "document_type": $(this).attr('data-document-type'),
-                        "document_id": $(this).attr('data-document-id'),
-                        "version": $(this).attr('data-document-version'),
-                        "content": JSON.stringify(values)
-                    });
-                });
-                // Make ajax
-	            $.ajax({
-		            url: "{{ url_for('save', document_type=document_type) }}" + message,
-		            data: JSON.stringify(data),
-		            contentType: 'application/json',
-		            dataType: 'json',
-		            type: "POST",
-		            success: function(response){
-		                if(response && response.documents) {
-                            var message = 'Contenu enregistré.';
-                            var div = $('<div>', {'class': 'ok'}).html(message);
-                            $('body>section').before(div);
-                            div.slideDown(300).delay(3000).fadeOut();
-                            $.each(response.documents, function () {
-                                var divs = $('#iframe').contents().find(
-                                    'div[contenteditable]' +
-                                    '[data-document-type="' + this.document_type + '"]' +
-                                    '[data-document-id="' + this.document_id + '"]'
-                                );
-                                divs.attr('data-document-version', this.version);
-                            });
-                        } else {
-                            var message = 'Conflit: Veuillez rafraîchir la page.';
-                            var div = $('<div>', {'class': 'error'}).html(message);
-                            $('body>section').before(div);
-                            div.slideDown(300).delay(3000).fadeOut();
-                        }            
-                    }
-	            });			
-	        },
-	        'save_as': function () {
-	          var message = prompt('Message:');
-	          if(message==null) {
-	            return false;
-	          } else if(message.length==0) {
-	            if(confirm('Vous n\'avez pas spécifié de message, continuer ?')) {
-	              this.save();
-	            } else {
-							  return false;
-							}
-	          } else {
-	            this.save(message);
-	          }
-	        },
-	        'pdf': function() {
-	            var loader = $('<div>', {'class': 'loading'});
-	            loader.fadeIn(500);
-	            
-	            $.ajax({
-		            url:"{{ url_for('pdf_link', document_type=document_type, document_name=document_name) }}",
-		            success: function(response){
-			            $('#loader').hide();
-			            window.location=response;
-		            }
-	            });
-          },
-          'settings': function () {
-              $('#settings').toggle();
-	        },
-          'pdf': function() {
-              var loader = $('<div>', {'class': 'loading'});
-              loader.fadeIn(500);
+    function $iframe(elmt) {
+        return $('#iframe').contents().find(elmt);
+    } 
+    function save_ok_callback() {
+        var message = 'Contenu enregistré.';
+        var div = $('<div>', {'class': 'ok'}).html(message);
+        $('body>section').before(div);
+        div.slideDown(300).delay(3000).fadeOut();
+    }
+    function save_error_callback() {
+        var message = 'Conflit: Veuillez rafraîchir la page.';
+        var div = $('<div>', {'class': 'error'}).html(message);
+        $('body>section').before(div);
+        div.slideDown(300).delay(3000).fadeOut();
+    }
+    $(function () {
+        var iframe = $('<iframe>', {
+            'id': 'iframe',
+            'src': '{{ url_for("model", document_type=document_type, document_name=document_name) }}'
+        });
+        $('#teddybar').after(iframe);
 
-              $.ajax({
-                url:"{{ url_for('pdf_link', document_type=document_type, document_name=document_name) }}",
-                success: function(response){
-                  $('#loader').hide();
-                  window.location=response;
+        $('#iframe').load(function(){
+            $.each($('#iframe').contents().find('div[contenteditable]'), function() {
+                $(this).attr('data-hash', hashCode($(this).html()));
+             });
+        });
+        $('#teddybar').teddybar({
+            document : function () { return document.getElementById('iframe').contentWindow.document },
+            menu : {
+				        'Gras': 'bold',
+				        'Italique': 'italic',
+				        'Souligner': 'underline',
+				        'Barrer': 'strikethrough',
+				        '-1': null,
+				        'Police': ['fontname', {'- Police -': '0','Serif': 'serif', 'Sans-serif': 'sans-serif','Courier': 'courier new'}],
+				        'Taille': ['fontsize', {'- Taille -': '0','1 (8pt)': '1', '2 (10pt)': '2','3 (12pt)': '3','4 (14pt)': '4','5 (18pt)': '5','6 (24pt)': '6','7 (36pt)': '7'}],
+				        'Format': ['formatblock', {'- Format -': '0','Titre 1': 'h1','Titre 2': 'h2','Titre 3': 'h3','Titre 4': 'h4','Titre 5': 'h5','Titre 6': 'h6','Paragraphe': 'p','Preformaté': 'pre'}],
+				        '-2': null,
+				        'Liste numerotée': 'insertorderedlist',
+				        'Liste': 'insertunorderedlist',
+				        '-3': null,
+				        'Aligner à gauche': 'justifyleft',
+				        'Aligner à droite': 'justifyright',
+				        'Centrer': 'justifycenter',
+				        'Justifier': 'justifyfull',		
+				        '-4': null,
+				        'Annuler': 'undo',
+				        'Refaire': 'redo',
+                '-5': null,
+                'Enregistrer le document': 'save',
+                'Enregistrer le document avec un message': 'save_as',
+                'Générer le PDF': 'pdf',
+                '-6': null,
+                'Options': 'settings'
+			      },
+            commands : {
+                'save': function() {
+                    message = null;
+                    if(arguments[0]) message = arguments[0];
+                    save(
+                        $iframe('div[contenteditable]'),
+                        $iframe('span[contenteditable]'),
+                        message,
+                        "{{ url_for('save', document_type=document_type) }}",
+                        save_ok_callback,
+                        save_error_callback
+                    )
+                },
+	              'save_as': function () {
+	                var message = prompt('Message:');
+	                if(message==null) {
+	                  return false;
+	                } else if(message.length==0) {
+	                  if(confirm('Vous n\'avez pas spécifié de message, continuer ?')) {
+	                    this.save();
+	                  } else {
+							        return false;
+							      }
+	                } else {
+	                  this.save(message);
+	                }
+	              },
+	              'pdf': function() {
+	                  var loader = $('<div>', {'class': 'loading'});
+	                  loader.fadeIn(500);
+	                  
+	                  $.ajax({
+		                  url:"{{ url_for('pdf_link', document_type=document_type, document_name=document_name) }}",
+		                  success: function(response){
+			                  $('#loader').hide();
+			                  window.location=response;
+		                  }
+	                  });
+                },
+                'settings': function () {
+                    $('#settings').toggle();
+	              },
+                'pdf': function() {
+                    var loader = $('<div>', {'class': 'loading'});
+                    loader.fadeIn(500);
+                    $.ajax({
+                        url:"{{ url_for('pdf_link', document_type=document_type, document_name=document_name) }}",
+                        success: function(response){
+                            $('#loader').hide();
+                            window.location=response;
+                        }
+                    });
                 }
-              });
-          }
-        }
-      });
+            } // End commands
+        }); // End TeddyBar
       
-      // Create settings div
-      settings = $('<div>', {'id': 'settings'});   
-      settings.load("{{ url_for('read_rights')}}", {'document_id': '{{ document_name }}'});
-      $('#teddybar .settings').after(settings).show();
-	    
-		  $('body').on('click', '.add-people', function () {
-		    $('#users').toggle(200);
-		  });
+        // Create settings div
+        settings = $('<div>', {'id': 'settings'});   
+        settings.load("{{ url_for('read_rights')}}", {'document_id': '{{ document_name }}'});
+        $('#teddybar .settings').after(settings).show();
+        
+        $('body').on('click', '.add-people', function () {
+            $('#users').toggle(200);
+        });
 		  
-		  $('body').on('click', '#users input[type=button]', function() {
-		      read = $('input[name=r]').is(':checked');
-		      write = $('input[name=w]').is(':checked');
-		      if(read === false && write === false) {
-		        alert('Veuillez cocher au moins 1 case');
-		        return false;
-		      }
-		      document_id = "{{ document_name }}";
-		      user_id = $('select[name=user]').val();
-		      $.ajax({
-		          url: "{{ url_for('create_rights') }}",
-		          type: 'post',
-		          data: {
-		              'document_id': document_id,
-		              'user_id': user_id,
-		              'read': read,
-		              'write': write  
-		          },
-		          success: function(user) {
-		              rights = ['Lecture et Ecriture', 'rw'];
-		              if(user.write == 'true' && user.read == 'false') {
-		                  rights = ['Ecriture', 'w'];
-		              }
-		              else if(user.write == 'false' && user.read == 'true'){
-		                rights = ['Lecture', 'r'];
-		              }
-		              row = '<tr data-user="' + user.user_id + '"><td>' + user.user_id + '</td><td class="rights"><a data-rights="' + rights[1] + '" class="update-people" href="javascript:display_right_options(\'' + document_id + '\',\'' + user.user_id + '\')">' + rights[0] + '</a></td><td><a href="javascript:" onclick="delete_rights(\'' + document_id + '\',\'' + user.user_id + '\')">x</a></td></tr>';
-		              $('#allowed-users').append(row);
-		              $('select[name=user]').find('option[value="' + user.user_id + '"]').remove();
-		              if($('select[name=user]').find('option').length == 0) {
-		                  $('#users, .add-people').hide();
-		              }
-		          }
-		      });
-		  }); 
-		  if($('select[name=user]').find('option').length == 0) {
-          $('#users, .add-people').hide();
-      }
+        $('body').on('click', '#users input[type=button]', function() {
+            read = $('input[name=r]').is(':checked');
+            write = $('input[name=w]').is(':checked');
+            if(read === false && write === false) {
+                alert('Veuillez cocher au moins 1 case');
+                return false;
+            }
+            document_id = "{{ document_name }}";
+            user_id = $('select[name=user]').val();
+            $.ajax({
+                url: "{{ url_for('create_rights') }}",
+                type: 'post',
+                data: {
+                    'document_id': document_id,
+                    'user_id': user_id,
+                    'read': read,
+                    'write': write  
+                },
+                success: function(user) {
+                    rights = ['Lecture et Ecriture', 'rw'];
+                    if(user.write == 'true' && user.read == 'false') {
+                        rights = ['Ecriture', 'w'];
+                    }
+                    else if(user.write == 'false' && user.read == 'true'){
+                        rights = ['Lecture', 'r'];
+                    }
+                    row = '<tr data-user="' + user.user_id + '"><td>' + user.user_id + '</td><td class="rights"><a data-rights="' + rights[1] + '" class="update-people" href="javascript:display_right_options(\'' + document_id + '\',\'' + user.user_id + '\')">' + rights[0] + '</a></td><td><a href="javascript:" onclick="delete_rights(\'' + document_id + '\',\'' + user.user_id + '\')">x</a></td></tr>';
+                    $('#allowed-users').append(row);
+                    $('select[name=user]').find('option[value="' + user.user_id + '"]').remove();
+                    if($('select[name=user]').find('option').length == 0) {
+                        $('#users, .add-people').hide();
+                    }
+		            }
+		        });
+		    }); 
+		    if($('select[name=user]').find('option').length == 0) {
+                $('#users, .add-people').hide();
+        }
     });// end $(function())
     
     function display_right_options(document_id, user_id) {
@@ -220,13 +225,11 @@
             }
         });
     }
+
 </script>
 {% endblock head %}
 
 {% block content %}
   <div id="teddybar"></div>
- 
-  <iframe id="iframe" src="{{ url_for('model', document_type=document_type, document_name=document_name) }}"></iframe>
-
 {% endblock content %}
 

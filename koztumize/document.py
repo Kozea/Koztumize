@@ -1,23 +1,27 @@
+"""Documents for Koztumize."""
 # -*- coding: utf-8 -*-
 
 import os
 import locale
-from application import app
 from itertools import islice, chain
+from koztumize.application import app
 
 
 def priceformat(amount):
+    """Return amount formatted according into its locale."""
     if isinstance(amount, basestring):
         amount = amount.replace(',', '.')
     return locale.format_string('%.2f', float(amount))
 
 
 class KozDoc(app.Document):
+    """Base class for Koztumize documents."""
     def __init__(self, document_id, version=None):
         super(KozDoc, self).__init__(document_id, version)
 
 
 class CourrierStandard(KozDoc):
+    """Class for Standard Letter document."""
     type_name = 'courrier standard'
     model_path = os.path.join(
         app.config['MODELS'], 'Courrier', 'courrier standard')
@@ -25,6 +29,7 @@ class CourrierStandard(KozDoc):
 
 
 class FactureAbonnement(KozDoc):
+    """Class for Bills document."""
     def __init__(self, document_id, version=None):
         super(FactureAbonnement, self).__init__(document_id, version)
         self.jinja_environment.filters['priceformat'] = priceformat
@@ -35,8 +40,9 @@ class FactureAbonnement(KozDoc):
     document_id_template = '{document_name}'
 
     def render_prix(self, data):
-
+        """Render the price for the total table."""
         def batch(iterable, size):
+            """Allow list batching."""
             sourceiter = iter(iterable)
             while True:
                 batchiter = islice(sourceiter, size)

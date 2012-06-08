@@ -1,3 +1,5 @@
+"""Declare the Koztumize application using Pynuts."""
+
 import ldap
 from pynuts import Pynuts
 
@@ -12,4 +14,5 @@ class Koztumize(Pynuts):
         return self.config['LDAP']
 
 
-app = Koztumize(__name__, config_file='config/config.cfg')
+app = Koztumize(
+    __name__, config_file='config/config.cfg')  # pylint: disable=C0103

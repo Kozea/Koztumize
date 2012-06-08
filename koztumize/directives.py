@@ -1,3 +1,5 @@
+"""Directives for Koztumize documents."""
+
 from docutils.parsers.rst import directives, Directive, roles
 import docutils.core
 import os
@@ -48,23 +50,6 @@ class Script(Directive):
         path = document.resource_http_url(os.path.join('javascript', filename))
         content = ('<script src="%s.js" type="text/javascript"></script>'
                    % path)
-        return [docutils.nodes.raw('', content, format='html')]
-
-
-class Button(Directive):
-    """A rest directive who create a button in HTML."""
-    required_arguments = 2
-    optional_arguments = 0
-    final_argument_whitespace = True
-    has_content = False
-    option_spec = {'class': directives.class_option}
-
-    def run(self):
-        content = ('<input type="button" class="%s" value="%s" onclick="%s"/>'
-                  % (
-                      ' '.join(self.options.get('class', [])),
-                      self.arguments[0], self.arguments[1],
-                  ))
         return [docutils.nodes.raw('', content, format='html')]
 
 

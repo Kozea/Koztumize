@@ -1,7 +1,9 @@
+"""Koztumize document rights."""
+
 from flask import session, request
-from application import app
 from pynuts.rights import acl
-from model import Rights, UserRights
+from koztumize.application import app
+from koztumize.model import UserRights
 
 
 class Context(app.Context):
@@ -44,6 +46,7 @@ def connected():
 
 @acl
 def document_readable():
+    """Return if a document is readable by the user."""
     document_id = request.view_args['document_name']
     user_id = app.context.person
     rights = UserRights.query.filter_by(
@@ -53,6 +56,7 @@ def document_readable():
 
 @acl
 def document_writable():
+    """Return if a document is writable by the user."""
     document_id = request.view_args['document_name']
     user_id = app.context.person
     rights = UserRights.query.filter_by(

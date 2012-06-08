@@ -1,24 +1,28 @@
-from application import app
+"""Koztumize model classes."""
+
+from koztumize.application import app
 from flask.ext.sqlalchemy import SQLAlchemy
 
 
-db = SQLAlchemy(app)
+DB = SQLAlchemy(app)
 
 
-class Rights(db.Model):
-    document_id = db.Column(db.Integer, primary_key=True)
-    owner = db.Column(db.String(), unique=True)
+class Rights(DB.Model):
+    """Class for Rights table."""
+    document_id = DB.Column(DB.Integer, primary_key=True)
+    owner = DB.Column(DB.String(), unique=True)
 
     def __init__(self, doc_id, owner):
         self.document_id = doc_id
         self.owner = owner
 
 
-class UserRights(db.Model):
-    document_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.String(), primary_key=True)
-    read = db.Column(db.Boolean, unique=True)
-    write = db.Column(db.Boolean, unique=True)
+class UserRights(DB.Model):
+    """Class for User_rights table."""
+    document_id = DB.Column(DB.Integer, primary_key=True)
+    user_id = DB.Column(DB.String(), primary_key=True)
+    read = DB.Column(DB.Boolean, unique=True)
+    write = DB.Column(DB.Boolean, unique=True)
 
     def __init__(self, doc_id, user_id, read=None, write=None):
         self.document_id = doc_id
@@ -27,9 +31,10 @@ class UserRights(db.Model):
         self.write = write or False
 
 
-class Users(db.Model):
-    user_id = db.Column('uidNumber', db.Integer, primary_key=True)
-    name = db.Column('sn', db.String)
-    firstname = db.Column('givenName', db.String)
-    fullname = db.Column('cn', db.String)
-    employe = db.Column('employeeNumber', db.Integer)
+class Users(DB.Model):
+    """Class for User table."""
+    user_id = DB.Column('uidNumber', DB.Integer, primary_key=True)
+    name = DB.Column('sn', DB.String)
+    firstname = DB.Column('givenName', DB.String)
+    fullname = DB.Column('cn', DB.String)
+    employe = DB.Column('employeeNumber', DB.Integer)

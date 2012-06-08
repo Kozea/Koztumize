@@ -1,4 +1,5 @@
 #! /usr/bin/env python2
+"""Executable file for Koztumize."""
 
 from koztumize.routes import app
 

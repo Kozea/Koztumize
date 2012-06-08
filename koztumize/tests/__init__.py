@@ -1,8 +1,8 @@
+"""Init file for koztumize tests"""
 # -*- coding: utf-8 -*-
 
 import os
 import shutil
-import pynuts
 from tempfile import mkdtemp
 from brigit import Git
 from koztumize import application
@@ -17,13 +17,14 @@ def execute_sql(app, filename, folder=None):
         path = os.path.join(PATH, 'tests', 'sql', filename)
     else:
         path = os.path.join(PATH, 'sql', filename)
-    with app.open_resource(path) as f:
-        sql = f.read().decode('utf-8')
+    with app.open_resource(path) as sqlfile:
+        sql = sqlfile.read().decode('utf-8')
     app.db.session.execute(sql)
     app.db.session.commit()
 
 
 def setup():
+    """Setup function for tests."""
     # global variable shouldn't be used but is quite useful here
     # pylint: disable=W0603
     global TEMP_DIR
@@ -43,9 +44,9 @@ def setup():
     git.pull()
     git.checkout('models')
     execute_sql(app, 'db.sql', 'tests')
-    from koztumize import routes
-    import document
-    
+    import koztumize.routes
+    import koztumize.tests.document
+
 
 def teardown():
     """Remove the temp directory after the tests."""

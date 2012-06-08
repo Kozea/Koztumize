@@ -1,3 +1,4 @@
+"""Koztumize routes."""
 # -*- coding: utf-8 -*-
 
 import os
@@ -6,15 +7,17 @@ from flask import (render_template, request, redirect, url_for, jsonify,
                    session, current_app, flash)
 from pynuts.document import InvalidId
 from pynuts.rights import allow_if
-from application import app
-import rights as Is
-from document import CourrierStandard
-from directives import Button
-from model import Users, UserRights, Rights, db
-from helpers import NoPermission, get_last_commits
+from koztumize.application import app
+import koztumize.rights as Is
+from koztumize.document import CourrierStandard
+from koztumize.directives import Button
+from koztumize.model import Users, UserRights, Rights, DB as db
+from koztumize.helpers import NoPermission, get_last_commits
+
 
 @app.route('/login', methods=('POST', ))
 def login_post():
+    """Test the user authentification."""
     username = request.form['login']
     password = request.form['passwd']
     user = current_app.ldap.search_s(
@@ -37,6 +40,7 @@ def login_post():
 @app.route('/logout')
 @allow_if(Is.connected)
 def logout():
+    """Logout route."""
     session.clear()
     return render_template('login.html')
 
@@ -44,6 +48,7 @@ def logout():
 @app.route('/')
 @allow_if(Is.connected)
 def index():
+    """The index displays all the available models."""
     model_path = app.config['MODELS']
     models = {
         category: os.listdir(os.path.join(model_path, category))
@@ -55,6 +60,12 @@ def index():
 @app.route('/create/<document_type>', methods=('GET', 'POST'))
 @allow_if(Is.connected)
 def create_document(document_type=None):
+    """
+    The route which renders the form for document creation if method is GET
+
+    If POST, create the document by giving its type and its name.
+
+    """
     if request.method == 'GET':
         return render_template('document_form.html',
                                document_type=document_type)
@@ -77,7 +88,8 @@ def create_document(document_type=None):
                             author_name=session.get('user'),
                             author_email=session.get('usermail'))
         except InvalidId:
-            flash('Erreur, veuillez ne pas mettre de "/" dans le nom de votre document.', 'error')
+            flash('Erreur, veuillez ne pas mettre de "/" dans le nom de votre '
+                  'document.', 'error')
             return redirect(url_for(
                 'create_document', document_type=document_type))
         db.session.add(Rights(document_name, session.get('user')))
@@ -93,6 +105,7 @@ def create_document(document_type=None):
 @allow_if(Is.connected)
 @allow_if(Is.document_writable, NoPermission)
 def edit(document_name=None, document_type=None):
+    """Render the page for document edition."""
     return render_template(
         'edit.html', document_type=document_type, document_name=document_name)
 
@@ -101,6 +114,7 @@ def edit(document_name=None, document_type=None):
 @allow_if(Is.connected)
 @allow_if(Is.document_readable, NoPermission)
 def view(document_name=None, document_type=None, version=None):
+    """Render the page for document view."""
     return render_template('view.html', document_type=document_type,
                            document_name=document_name, version=version)
 
@@ -108,9 +122,9 @@ def view(document_name=None, document_type=None, version=None):
 @app.route('/documents')
 @allow_if(Is.connected)
 def documents():
+    """Render the list of all the version of existing documents."""
     document_classes = app.documents.values()
-    documents = []
-    #users = Users.query.all()
+    document_list = []
     for document_class in document_classes:
         document_ids = document_class.list_document_ids()
         for document_id in document_ids:
@@ -118,25 +132,25 @@ def documents():
             users_write = []
             allowed_users = UserRights.query.filter_by(
                 document_id=document_id).all()
-            #allowed_user_ids = [user.user_id for user in allowed_users]
             for user in allowed_users:
                 if user.read:
                     users_read.append(user.user_id)
                 if user.write:
                     users_write.append(user.user_id)
-            documents.append({'document_id': document_id,
+            document_list.append({'document_id': document_id,
                 'users_read': users_read,
                 'users_write': users_write,
                 'type': document_class.type_name,
                 'history': list(document_class(document_id).history)})
     return render_template('documents.html',
-                           document_list=documents)
+                           document_list=document_list)
 
 
 @app.route('/model/<document_type>/<path:document_name>/head')
 @app.route('/model/<document_type>/<path:document_name>/<version>')
 @allow_if(Is.connected)
 def model(document_name=None, document_type=None, version=None):
+    """The route which renders the ReST model parsed in HTML."""
     document = current_app.documents[document_type]
     return document.html('model.html', document=document,
                          document_name=document_name, version=version)
@@ -146,6 +160,7 @@ def model(document_name=None, document_type=None, version=None):
 @app.route('/pdf/<document_type>/<path:document_name>/<version>')
 @allow_if(Is.connected)
 def pdf(document_type, document_name, version=None):
+    """The route which returns a document as PDF."""
     document = app.documents[document_type]
     return document.download_pdf(document_name=document_name,
                                  filename=document_name + '.pdf',
@@ -154,16 +169,19 @@ def pdf(document_type, document_name, version=None):
 
 # AJAX routes
 @app.route('/save/<document_type>', methods=('POST', ))
-@app.route('/save/<document_type>/<message>', methods=('POST', ))
-def save(document_type, message=None):
+def save(document_type):
+    """Save a document by giving its type and its name."""
     document = current_app.documents[document_type]
-    return jsonify(documents=document.update_content(
-        request.json, author_name=session.get('user'),
-        author_email=session.get('usermail'), message=message))
+    return jsonify(
+        documents=document.update_content(
+            request.json['data'], author_name=session.get('user'),
+            author_email=session.get('usermail'),
+            message=request.json['message']))
 
 
 @app.route('/create_rights', methods=('POST',))
 def create_rights():
+    """Grant specific rights to a document."""
     document_id = request.form['document_id']
     user_id = request.form['user_id']
     read = request.form['read']
@@ -175,6 +193,7 @@ def create_rights():
 
 @app.route('/read_rights', methods=('POST',))
 def read_rights():
+    """Render a list of users and their rights for the current document."""
     document_id = request.form['document_id']
     users = Users.query.all()
     allowed_users = UserRights.query.filter_by(document_id=document_id).all()
@@ -186,10 +205,11 @@ def read_rights():
     return render_template('rights.html', document_name=document_id,
                            users=users, allowed_users=allowed_users,
                            owner=owner, available_users=available_users)
- 
+
 
 @app.route('/update_rights', methods=('POST',))
 def update_rights():
+    """Modify rights for a document."""
     document_id = request.form['document_id']
     user_id = request.form['user_id']
     rights = request.form['rights']
@@ -214,6 +234,7 @@ def update_rights():
 
 @app.route('/delete_rights', methods=('POST',))
 def delete_rights():
+    """Remove rights for a document."""
     document_id = request.form['document_id']
     user_id = request.form['user_id']
     db.session.query(UserRights).filter_by(
@@ -224,5 +245,6 @@ def delete_rights():
 
 @app.route('/pdf_link/<string:document_type>/<string:document_name>')
 def pdf_link(document_type, document_name):
+    """Return the link for PDF downloading."""
     return url_for(
         'pdf', document_type=document_type, document_name=document_name)

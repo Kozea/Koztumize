@@ -18,7 +18,6 @@ Helpers for tests, with definition of decorator and function.
 
 """
 from koztumize import application
-from flask import session
 from functools import wraps
 from nose.tools import eq_
 
@@ -40,12 +39,12 @@ def request(method, route, status_code=200, content_type='text/html',
     """
     Create the test_client  and check status code and content_type.
     """
-    response = method(route, content_type=data_content_type, data=data, 
+    response = method(route, content_type=data_content_type, data=data,
                       follow_redirects=follow_redirects)
     eq_(response.status_code, status_code)
     assert content_type in response.content_type
     return response
-    
+
 
 # This class is a monkey, it does not use its arguments
 # pylint: disable=W0613,R0201
@@ -53,17 +52,17 @@ class FakeLDAP(object):
     """Redefine the LDAP for the test suite."""
     def search_s(self, *args, **kwargs):
         """Redefine method search for the fake LDAP."""
-        FAKE_USERS= {
+        fake_users = {
             'Tester': 'testermail',
             'Tester 2': 'tester2mail',
         }
         username = args[2][4:]
-        if username in FAKE_USERS:
-            return[[None, {'cn': [username], 'mail': [FAKE_USERS[username]]}]]
+        if username in fake_users:
+            return[[None, {'cn': [username], 'mail': [fake_users[username]]}]]
         import ldap
         raise ldap.INVALID_CREDENTIALS
 
     def simple_bind_s(self, *args, **kwargs):
         """Redefine method bind for the fake LDAP."""
-        
+
 # pylint: enable=W0613,R0201

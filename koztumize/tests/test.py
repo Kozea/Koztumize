@@ -20,10 +20,9 @@ Test for Koztumize (all the routes are tested)
 
 """
 
-import os
 import json
 import ldap
-from flask import url_for, session
+from flask import url_for
 from .helpers import with_client, request
 from koztumize import application
 from nose.tools import raises
@@ -50,7 +49,7 @@ def test_logout(client):
         response = request(client.get, url_for('logout'))
         assert 'Veuillez vous connecter' in response.data
         response = request(client.get, '/', status_code=403)
-        
+
 
 @with_client
 def test_index(client):
@@ -60,8 +59,8 @@ def test_index(client):
         assert 'Koztumize' in response.data
         assert 'Test' in response.data
         assert 'test' in response.data
-    
-    
+
+
 @with_client
 def test_create_document(client):
     """Test the document creation."""
@@ -71,7 +70,10 @@ def test_create_document(client):
         assert 'Veuillez choisir un nom pour le document' in response.data
         response = request(client.post, url_for('create_document',
             document_type='test'), data={'name': 'Test/test'})
-        assert '<p class="error">Erreur, veuillez ne pas mettre de &#34;/&#34; dans le nom de votre document.</p>' in response.data
+        assert (
+            '<p class="error">Erreur, veuillez ne pas mettre de &#34;/&#34; '
+            'dans le nom de votre document.</p>'
+            in response.data)
         response = request(client.post, url_for('create_document',
             document_type='test'), data={'name': ''})
         assert '<p class="error">Veuillez saisir un nom pour votre document' \
@@ -97,8 +99,10 @@ def test_edit(client):
         client.post('login', data={'login': 'Tester 2', 'passwd': 'tester2'})
         response = request(client.get, url_for(
             'edit', document_type='test', document_name='First test'))
-        data = '<p class="error">Vous n&#39;avez pas l&#39;autorisation d&#39;accéder à cette page.</p>'
-        assert data in response.data
+        assert (
+            '<p class="error">Vous n&#39;avez pas l&#39;autorisation '
+            'd&#39;accéder à cette page.</p>'
+            in response.data)
 
 
 @with_client
@@ -110,7 +114,7 @@ def test_view(client):
             'view', document_type='test', document_name='First test',
             version=version))
         assert 'teddybar' not in response.data
-        
+
 
 @with_client
 def test_model(client):
@@ -128,7 +132,7 @@ def test_documents(client):
         response = request(client.get, url_for('documents'))
         data = '<a href="/edit/test/First%20test">First test</a>'
         assert data in response.data
-        
+
 
 @with_client
 def test_pdf_link(client):
@@ -137,7 +141,7 @@ def test_pdf_link(client):
         response = request(client.get, url_for(
         'pdf_link', document_type='test', document_name='First test'))
         assert '/pdf/test/First%20test' in response.data
-        
+
 
 @with_client
 def test_pdf(client):
@@ -147,8 +151,8 @@ def test_pdf(client):
         'pdf', document_type='test', document_name='First test'),
         content_type='application/pdf')
         assert response.data[:4] == '%PDF'
-        
-        
+
+
 @with_client
 def test_rights(client):
     """Test the rights."""
@@ -167,19 +171,22 @@ def test_rights(client):
 
         client.get('logout')
         client.post('login', data={'login': 'Tester 2', 'passwd': 'tester2'})
-        
+
         #Test read right
         version = application.app.documents['test']('First test').version
         response = request(client.get, url_for(
-            'view', document_type='test', document_name='First test', version=version))
+            'view', document_type='test', document_name='First test',
+            version=version))
         assert 'teddybar' not in response.data
-        
+
         #Test write right
         response = request(client.get, url_for(
             'edit', document_type='test', document_name='First test'))
-        data = '<p class="error">Vous n&#39;avez pas l&#39;autorisation d&#39;accéder à cette page.</p>'
-        assert data in response.data
-        
+        assert (
+            '<p class="error">Vous n&#39;avez pas l&#39;autorisation '
+            'd&#39;accéder à cette page.</p>'
+            in response.data)
+
         client.get('logout')
         client.post('login', data={'login': 'Tester', 'passwd': 'tester'})
 
@@ -188,7 +195,7 @@ def test_rights(client):
             client.post,
             url_for('read_rights'), data={'document_id': 'First test'})
         assert '<div>Qui a acc\xc3\xa8s</div>' in response.data
-        
+
         #Test update_rights
         #Allow only read
         version = application.app.documents['test']('First test').version
@@ -202,24 +209,27 @@ def test_rights(client):
             content_type='application/json',
             data=data)
         assert 'Lecture' in response.data
-        
+
         client.get('logout')
         client.post('login', data={'login': 'Tester 2', 'passwd': 'tester2'})
-        
+
         #Test write right
         response = request(client.get, url_for(
             'edit', document_type='test', document_name='First test'))
-        data = '<p class="error">Vous n&#39;avez pas l&#39;autorisation d&#39;accéder à cette page.</p>'
-        assert data in response.data
+        assert (
+            '<p class="error">Vous n&#39;avez pas l&#39;autorisation '
+            'd&#39;accéder à cette page.</p>'
+            in response.data)
 
         #Test read right
         response = request(client.get, url_for(
-            'view', document_type='test', document_name='First test', version=version))
+            'view', document_type='test', document_name='First test',
+            version=version))
         assert 'teddybar' not in response.data
-        
+
         client.get('logout')
         client.post('login', data={'login': 'Tester', 'passwd': 'tester'})
-        
+
         #Allow only write
         data = {
             'document_id': 'First test',
@@ -231,24 +241,26 @@ def test_rights(client):
             content_type='application/json',
             data=data)
         assert 'Ecriture' in response.data
-        
+
         client.get('logout')
         client.post('login', data={'login': 'Tester 2', 'passwd': 'tester2'})
-        
+
         #Test write right
         response = request(client.get, url_for(
             'edit', document_type='test', document_name='First test'))
         assert 'teddybar' in response.data
-        
+
         #Test read right
         response = request(client.get, url_for(
-            'view', document_type='test', document_name='First test', version=version))
-        data = '<p class="error">Vous n&#39;avez pas l&#39;autorisation d&#39;accéder à cette page.</p>'
-        assert data in response.data
-        
+            'view', document_type='test', document_name='First test',
+            version=version))
+        assert (
+            '<p class="error">Vous n&#39;avez pas l&#39;autorisation '
+            'd&#39;accéder à cette page.</p>'
+            in response.data)
         client.get('logout')
         client.post('login', data={'login': 'Tester', 'passwd': 'tester'})
-        
+
         #Allow both read & write
         data = {
             'document_id': 'First test',
@@ -260,20 +272,21 @@ def test_rights(client):
             content_type='application/json',
             data=data)
         assert 'Lecture et Ecriture' in response.data
-        
+
         client.get('logout')
         client.post('login', data={'login': 'Tester 2', 'passwd': 'tester2'})
-        
+
         #Test write right
         response = request(client.get, url_for(
             'edit', document_type='test', document_name='First test'))
         assert 'teddybar' in response.data
-        
+
         #Test read right
         response = request(client.get, url_for(
-            'view', document_type='test', document_name='First test', version=version))
+            'view', document_type='test', document_name='First test',
+            version=version))
         assert 'teddybar' not in response.data
-        
+
         client.get('logout')
         client.post('login', data={'login': 'Tester', 'passwd': 'tester'})
 
@@ -286,8 +299,8 @@ def test_rights(client):
             url_for('delete_rights'),
             data=data)
         assert 'Tester 2' in response.data
-        
-        
+
+
 @with_client
 def test_save(client):
     """Test the document saving."""
