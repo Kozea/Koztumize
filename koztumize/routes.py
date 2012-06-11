@@ -176,7 +176,7 @@ def save(document_type):
         documents=document.update_content(
             request.json['data'], author_name=session.get('user'),
             author_email=session.get('usermail'),
-            message=request.json['message']))
+            message=request.json.get('message')))
 
 
 @app.route('/create_rights', methods=('POST',))

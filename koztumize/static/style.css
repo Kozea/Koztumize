@@ -464,16 +464,17 @@ div.error {
   width:20%;
   position:fixed;
   z-index:10000;
-  top:42px;
+  top:0;
   left:40%;
   font-size:0.9em;
-  background-color: #c6c6c6;
+  background-color: white;
   padding-top:8px;
   text-align:center;
   border-radius:0px 0px 3px 3px;
   border: thin solid #727272;
   text-shadow:0 0 1px #dadada outset;
   color:red;
+  box-shadow: 1px 1px 1px #999
 }
 
 /*

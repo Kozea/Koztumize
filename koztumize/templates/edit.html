@@ -5,8 +5,8 @@
 {% endblock title %}
 
 {% block head %}
-<link href="{{ url_for('_pynuts-static', filename='javascript/TeddyBar/teddybar.css') }}" media="screen" type="text/css" rel="stylesheet" />
-<script src="{{ url_for('_pynuts-static', filename='javascript/TeddyBar/teddybar.js') }}" type="text/javascript"></script>
+<link href="{{ url_for('static', filename='TeddyBar/teddybar.css') }}" media="screen" type="text/css" rel="stylesheet" />
+<script src="{{ url_for('static', filename='TeddyBar/teddybar.js') }}" type="text/javascript"></script>
 <script src="{{ url_for('_pynuts-static', filename='javascript/save.js') }}" type="text/javascript"></script>
 <script>
     function $iframe(elmt) {
@@ -16,13 +16,19 @@
         var message = 'Contenu enregistré.';
         var div = $('<div>', {'class': 'ok'}).html(message);
         $('body>section').before(div);
-        div.slideDown(300).delay(3000).fadeOut();
+        div.slideDown(300).delay(3000).fadeOut().queue(function(){$(this).remove()});
     }
     function save_error_callback() {
         var message = 'Conflit: Veuillez rafraîchir la page.';
         var div = $('<div>', {'class': 'error'}).html(message);
         $('body>section').before(div);
-        div.slideDown(300).delay(3000).fadeOut();
+        div.slideDown(300).delay(3000).fadeOut().queue(function(){$(this).remove()});
+    }
+    function save_empty_callback() {
+        var message = 'Erreur, aucun champs n\'a été modifié';
+        var div = $('<div>', {'class': 'error'}).html(message);
+        $('body>section').before(div);
+        div.slideDown(300).delay(3000).fadeOut().queue(function(){$(this).remove()});
     }
     $(function () {
         var iframe = $('<iframe>', {
@@ -67,16 +73,14 @@
 			      },
             commands : {
                 'save': function() {
-                    message = null;
-                    if(arguments[0]) message = arguments[0];
-                    save(
-                        $iframe('div[contenteditable]'),
-                        $iframe('span[contenteditable]'),
-                        message,
-                        "{{ url_for('save', document_type=document_type) }}",
-                        save_ok_callback,
-                        save_error_callback
-                    )
+                    save({
+                        divs: $iframe('div[contenteditable]'),
+                        span_containers: $iframe('span[contenteditable]'),
+                        url: "{{ url_for('save', document_type=document_type) }}",
+                        ok_callback: save_ok_callback,
+                        error_callback: save_error_callback,
+                        empty_callback: save_empty_callback
+                    });
                 },
 	              'save_as': function () {
 	                var message = prompt('Message:');
@@ -84,12 +88,20 @@
 	                  return false;
 	                } else if(message.length==0) {
 	                  if(confirm('Vous n\'avez pas spécifié de message, continuer ?')) {
-	                    this.save();
+                        this.save();
 	                  } else {
-							        return false;
-							      }
+		                  return false;
+	                  }
 	                } else {
-	                  this.save(message);
+                      save({
+                        divs: $iframe('div[contenteditable]'),
+                        span_containers: $iframe('span[contenteditable]'),
+                        url: "{{ url_for('save', document_type=document_type) }}",
+                        message: message,
+                        ok_callback: save_ok_callback,
+                        error_callback: save_error_callback,
+                        empty_callback: save_empty_callback
+                      });
 	                }
 	              },
 	              'pdf': function() {
