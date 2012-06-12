@@ -168,17 +168,6 @@ def pdf(document_type, document_name, version=None):
 
 
 # AJAX routes
-@app.route('/save/<document_type>', methods=('POST', ))
-def save(document_type):
-    """Save a document by giving its type and its name."""
-    document = current_app.documents[document_type]
-    return jsonify(
-        documents=document.update_content(
-            request.json['data'], author_name=session.get('user'),
-            author_email=session.get('usermail'),
-            message=request.json.get('message')))
-
-
 @app.route('/create_rights', methods=('POST',))
 def create_rights():
     """Grant specific rights to a document."""
