@@ -5,8 +5,8 @@
 {% endblock title %}
 
 {% block head %}
-<link href="{{ url_for('_pynuts-static', filename='javascript/TeddyBar/teddybar.css') }}" media="screen" type="text/css" rel="stylesheet" />
-<script src="{{ url_for('_pynuts-static', filename='javascript/TeddyBar/teddybar.js') }}" type="text/javascript"></script>
+<link href="{{ url_for('static', filename='TeddyBar/teddybar.css') }}" media="screen" type="text/css" rel="stylesheet" />
+<script src="{{ url_for('static', filename='TeddyBar/teddybar.js') }}" type="text/javascript"></script>
 <script src="{{ url_for('_pynuts-static', filename='javascript/save.js') }}" type="text/javascript"></script>
 <script>
     function $iframe(elmt) {
