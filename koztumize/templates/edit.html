@@ -5,9 +5,9 @@
 {% endblock title %}
 
 {% block head %}
-<link href="{{ url_for('static', filename='TeddyBar/teddybar.css') }}" media="screen" type="text/css" rel="stylesheet" />
-<script src="{{ url_for('static', filename='TeddyBar/teddybar.js') }}" type="text/javascript"></script>
-<script src="{{ url_for('_pynuts/static', filename='javascript/save.js') }}" type="text/javascript"></script>
+<link href="{{ url_for('_pynuts-static', filename='javascript/TeddyBar/teddybar.css') }}" media="screen" type="text/css" rel="stylesheet" />
+<script src="{{ url_for('_pynuts-static', filename='javascript/TeddyBar/teddybar.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('_pynuts-static', filename='javascript/save.js') }}" type="text/javascript"></script>
 <script>
     function $iframe(elmt) {
         return $('#iframe').contents().find(elmt);
@@ -25,7 +25,7 @@
         div.slideDown(300).delay(3000).fadeOut().queue(function(){$(this).remove()});
     }
     function save_empty_callback() {
-        var message = 'Erreur, aucun champs n\'a été modifié';
+        var message = 'Erreur, aucun champ n\'a été modifié';
         var div = $('<div>', {'class': 'error'}).html(message);
         $('body>section').before(div);
         div.slideDown(300).delay(3000).fadeOut().queue(function(){$(this).remove()});
@@ -44,33 +44,6 @@
         });
         $('#teddybar').teddybar({
             document : function () { return document.getElementById('iframe').contentWindow.document },
-            menu : {
-                'Gras': 'bold',
-                'Italique': 'italic',
-                'Souligner': 'underline',
-                'Barrer': 'strikethrough',
-                '-1': null,
-                'Police': ['fontname', {'- Police -': '0','Serif': 'serif', 'Sans-serif': 'sans-serif','Courier': 'courier new'}],
-                'Taille': ['fontsize', {'- Taille -': '0','1 (8pt)': '1', '2 (10pt)': '2','3 (12pt)': '3','4 (14pt)': '4','5 (18pt)': '5','6 (24pt)': '6','7 (36pt)': '7'}],
-                'Format': ['formatblock', {'- Format -': '0','Titre 1': 'h1','Titre 2': 'h2','Titre 3': 'h3','Titre 4': 'h4','Titre 5': 'h5','Titre 6': 'h6','Paragraphe': 'p','Preformaté': 'pre'}],
-                '-2': null,
-                'Liste numerotée': 'insertorderedlist',
-                'Liste': 'insertunorderedlist',
-                '-3': null,
-                'Aligner à gauche': 'justifyleft',
-                'Aligner à droite': 'justifyright',
-                'Centrer': 'justifycenter',
-                'Justifier': 'justifyfull',
-                '-4': null,
-                'Annuler': 'undo',
-                'Refaire': 'redo',
-                '-5': null,
-                'Enregistrer le document': 'save',
-                'Enregistrer le document avec un message': 'save_as',
-                'Générer le PDF': 'pdf',
-                '-6': null,
-                'Options': 'settings'
-            },
             commands : {
                 'save': function() {
                     save({
