@@ -74,19 +74,6 @@
                 if (command in config.commands) {
                     config.commands[command](value);
                 } else {
-                    try {
-                        config.document().execCommand("styleWithCSS", 0, false);
-                    } catch (e) {
-                        try {
-                            config.document().execCommand("useCSS", 0, true);
-                        } catch (e) {
-                            try {
-                                config.document().execCommand('styleWithCSS', false, false);
-                            }
-                            catch (e) {
-                            }
-                        }
-                    }
                     config.document().execCommand(command,false,value);
                 }
                 $(this).find('option').first().attr('selected','selected');
@@ -98,19 +85,6 @@
                 if (command in config.commands) {
                     config.commands[command]();
                 } else {
-                    try {
-                        config.document().execCommand("styleWithCSS", 0, false);
-                    } catch (e) {
-                        try {
-                            config.document().execCommand("useCSS", 0, true);
-                        } catch (e) {
-                            try {
-                                config.document().execCommand('styleWithCSS', false, false);
-                            }
-                            catch (e) {
-                            }
-                        }
-                    }
                     config.document().execCommand(command,false,'');
                 }
             });
