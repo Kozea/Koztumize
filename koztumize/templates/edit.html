@@ -9,9 +9,6 @@
 <script src="{{ url_for('static', filename='TeddyBar/teddybar.js') }}" type="text/javascript"></script>
 <script src="{{ url_for('_pynuts-static', filename='javascript/save.js') }}" type="text/javascript"></script>
 <script>
-    function $iframe(elmt) {
-        return $('#iframe').contents().find(elmt);
-    } 
     function save_ok_callback() {
         var message = 'Contenu enregistré.';
         var div = $('<div>', {'class': 'ok'}).html(message);
@@ -38,23 +35,20 @@
         $('#teddybar').after(iframe);
 
         $('#iframe').load(function(){
-            $.each($('#iframe').contents().find('div[contenteditable]'), function() {
-                $(this).attr('data-hash', hashCode($(this).html()));
-             });
+            init_content($(this));
         });
+ 
         $('#teddybar').teddybar({
             document : function () { return document.getElementById('iframe').contentWindow.document },
             commands : {
                 'save': function() {
-                    save({
-                        document: $('iframe'),
-                        divs: $iframe('div[contenteditable]'),
-                        span_containers: $iframe('span[contenteditable]'),
+                    save_content({
+                        document: $('#iframe'),
                         author: "{{ session.get('user') }}",
                         author_email: "{{ session.get('usermail') }}",
-                        ok_callback: save_ok_callback,
-                        error_callback: save_error_callback,
-                        empty_callback: save_empty_callback
+                        success_callback: save_ok_callback,
+                        fail_callback: save_error_callback,
+                        unchange_callback: save_empty_callback
                     });
                 },
                 'save_as': function () {
@@ -68,17 +62,15 @@
                             return false;
                         }
                     } else {
-                      save({
-                          document: $('iframe'),
-                          divs: $iframe('div[contenteditable]'),
-                          span_containers: $iframe('span[contenteditable]'),
-                          author: "{{ session.get('user') }}",
-                          author_email: "{{ session.get('usermail') }}",
-                          message: message,
-                          ok_callback: save_ok_callback,
-                          error_callback: save_error_callback,
-                          empty_callback: save_empty_callback
-                      });
+                        save_content({
+                            document: $('#iframe'),
+                            author: "{{ session.get('user') }}",
+                            author_email: "{{ session.get('usermail') }}",
+                            message: message,
+                            success_callback: save_ok_callback,
+                            fail_callback: save_error_callback,
+                            unchange_callback: save_empty_callback
+                        });
                     }
                 },
                 'pdf': function() {
