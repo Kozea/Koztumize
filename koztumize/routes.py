@@ -152,7 +152,8 @@ def documents():
 def model(document_name=None, document_type=None, version=None):
     """The route which renders the ReST model parsed in HTML."""
     document = current_app.documents[document_type]
-    return document.html('model.html', document=document,
+    editable = False if version else True
+    return document.html('model.html', editable=editable,
                          document_name=document_name, version=version)
 
 

@@ -16,8 +16,8 @@
         $(document.body).find('h2+ul').after(iframe);
 
         $('#iframe').load(function(){
-            $('iframe').contents().find('*[contenteditable]').removeAttr("contenteditable");
-            $('iframe').contents().find('.rem-line, add-line').remove();
+            $('iframe').contents().find('.rem-line, .add-line').remove();
+            $('iframe').contents().find('span[contenteditable]').removeAttr('contenteditable');
         });
     }
     
