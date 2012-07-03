@@ -4,7 +4,7 @@
 import os
 import locale
 from itertools import islice, chain
-from koztumize.application import app
+from .application import app
 
 
 def priceformat(amount):

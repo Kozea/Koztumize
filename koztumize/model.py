@@ -1,6 +1,6 @@
 """Koztumize model classes."""
 
-from koztumize.application import app
+from .application import app
 from flask.ext.sqlalchemy import SQLAlchemy
 
 

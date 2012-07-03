@@ -7,12 +7,12 @@ from flask import (render_template, request, redirect, url_for, jsonify,
                    session, current_app, flash)
 from pynuts.document import InvalidId
 from pynuts.rights import allow_if
-from koztumize.application import app
-import koztumize.rights as Is
-from koztumize.document import CourrierStandard
-from koztumize.directives import Button
-from koztumize.model import Users, UserRights, Rights, DB as db
-from koztumize.helpers import NoPermission, get_last_commits
+from . import rights as Is
+from .application import app
+from .document import CourrierStandard
+from .directives import Button
+from .model import Users, UserRights, Rights, DB as db
+from .helpers import NoPermission, get_last_commits
 
 
 @app.route('/login', methods=('POST', ))

@@ -2,8 +2,8 @@
 
 from flask import session, request, g
 from pynuts.rights import acl
-from koztumize.application import app
-from koztumize.model import UserRights
+from .application import app
+from .model import UserRights
 
 
 class Context(app.Context):
