@@ -93,8 +93,8 @@ def test_edit(client):
     with client.application.test_request_context():
         response = request(client.get, url_for(
             'edit', document_type='test', document_name='First test'))
-        data = '<iframe id="iframe" src="/model/test/First%20test/head">'
-        assert data in response.data
+        assert '<iframe>' in response.data
+        assert '/model/test/First%20test/head' in response.data
         client.get('/logout')
         client.post('login', data={'login': 'Tester 2', 'passwd': 'tester2'})
         response = request(client.get, url_for(
