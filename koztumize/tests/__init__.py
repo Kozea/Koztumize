@@ -4,8 +4,10 @@
 import os
 import shutil
 from tempfile import mkdtemp
+
 from brigit import Git
-from koztumize import application
+
+from .. import application
 
 PATH = os.path.dirname(os.path.dirname(__file__))
 TEMP_DIR = None
