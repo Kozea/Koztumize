@@ -16,5 +16,4 @@ class Koztumize(Pynuts):
 
 
 app = Koztumize(  # pylint: disable=E1101
-    __name__,
-    config_file=os.environ.get('KOZTUMIZE_CONFIG') or 'config/config.cfg')
+    __name__, config_file=os.environ.get('KOZTUMIZE_CONFIG'))
