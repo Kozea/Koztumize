@@ -307,14 +307,15 @@ def test_save(client):
     with client.application.test_request_context():
         version = application.app.documents['test']('First test').version
         data = json.dumps([{
-            'document_type': 'test',
-            'document_id': 'First test',
-            'version': version,
-            'part': 'Date',
-            'content': '05/06/2012'}])
+            'data': [{
+                'document_type': 'test',
+                'document_id': 'First test',
+                'version': version,
+                'part': 'Date',
+                'content': '05/06/2012'}])}]
         response = request(
             client.post,
-            url_for('save', document_type='test'),
+            url_for('pynuts-update_content'),
             content_type='application/json',
             data_content_type='application/json',
             data=data)
