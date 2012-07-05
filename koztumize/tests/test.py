@@ -312,7 +312,10 @@ def test_save(client):
                 'document_id': 'First test',
                 'version': version,
                 'part': 'Date',
-                'content': '05/06/2012'}]})
+                'content': '05/06/2012'}],
+            'message': None,
+            'author': None,
+            'author_email': None})
         response = request(
             client.post,
             url_for('_pynuts-update_content'),
