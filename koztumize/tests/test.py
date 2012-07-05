@@ -306,13 +306,13 @@ def test_save(client):
     """Test the document saving."""
     with client.application.test_request_context():
         version = application.app.documents['test']('First test').version
-        data = json.dumps([{
+        data = json.dumps({
             'data': [{
                 'document_type': 'test',
                 'document_id': 'First test',
                 'version': version,
                 'part': 'Date',
-                'content': '05/06/2012'}]}])
+                'content': '05/06/2012'}]})
         response = request(
             client.post,
             url_for('_pynuts-update_content'),
