@@ -33,7 +33,7 @@ def setup():
     global TEMP_DIR
     TEMP_DIR = mkdtemp()
     if not os.path.exists(FAKE_DIR):
-        os.path.mkdir(FAKE_DIR)
+        os.mkdir(FAKE_DIR)
         Git(os.path.join(FAKE_DIR, 'documents.git')).init()
     config_file = os.path.join(PATH, 'config', 'test.cfg')
     app = application.Koztumize('koztumize', config_file=config_file)
