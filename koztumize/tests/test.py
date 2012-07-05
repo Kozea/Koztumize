@@ -315,7 +315,7 @@ def test_save(client):
                 'content': '05/06/2012'}]}])
         response = request(
             client.post,
-            url_for('pynuts-update_content'),
+            url_for('_pynuts-update_content'),
             content_type='application/json',
             data_content_type='application/json',
             data=data)
