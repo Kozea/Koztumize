@@ -11,6 +11,7 @@ from .. import application
 
 PATH = os.path.dirname(os.path.dirname(__file__))
 TEMP_DIR = None
+FAKE_DIR = os.path.join(PATH, 'tests', 'fake_instance')
 
 
 def execute_sql(app, filename, folder=None):
@@ -31,11 +32,9 @@ def setup():
     # pylint: disable=W0603
     global TEMP_DIR
     TEMP_DIR = mkdtemp()
-    if not os.path.exists(
-        os.path.join(PATH, 'tests', 'fake_instance', 'documents.git')):
-        shutil.copytree(
-            os.path.join(PATH, 'tests', 'dump', 'instance', 'documents.git'),
-            os.path.join(PATH, 'tests', 'fake_instance', 'documents.git'))
+    if not os.path.exists(FAKE_DIR):
+        os.path.mkdir(FAKE_DIR)
+        Git(os.path.join(FAKE_DIR, 'documents.git')).init()
     config_file = os.path.join(PATH, 'config', 'test.cfg')
     app = application.Koztumize('koztumize', config_file=config_file)
     application.app = app
