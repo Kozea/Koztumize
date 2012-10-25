@@ -1,7 +1,7 @@
 name: Koztumize
 description: Dress your documents
 license: GPLv3
-public: true
+public: false
 url: http://www.koztumize.org/
 
 menu:
