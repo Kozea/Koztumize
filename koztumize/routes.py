@@ -4,29 +4,29 @@
 import os
 import ldap
 from flask import (render_template, request, redirect, url_for, jsonify,
-                   session, current_app, flash)
+                   session, flash)
 from pynuts.document import InvalidId
 from pynuts.rights import allow_if
 from . import rights as Is
-from .application import app
+from .application import nuts
 from .document import CourrierStandard
 from .directives import Button
 from .model import Users, UserRights, Rights, DB as db
 from .helpers import NoPermission, get_last_commits
 
 
-@app.route('/login', methods=('POST', ))
+@nuts.app.route('/login', methods=('POST', ))
 def login_post():
     """Test the user authentification."""
     username = request.form['login']
     password = request.form['passwd']
-    user = current_app.ldap.search_s(
-        app.config['LDAP_PATH'], ldap.SCOPE_ONELEVEL, "uid=%s" % username)
+    user = nuts.ldap.search_s(
+        nuts.app.config['LDAP_PATH'], ldap.SCOPE_ONELEVEL, "uid=%s" % username)
     if not user or not password:
         flash(u"Erreur : Les identifiants sont incorrects.", 'error')
         return render_template('login.html')
     try:
-        current_app.ldap.simple_bind_s(user[0][0], password)
+        nuts.ldap.simple_bind_s(user[0][0], password)
     except ldap.INVALID_CREDENTIALS:  # pragma: no cover
         flash(u"Erreur : Les identifiants sont incorrects.", 'error')
         return render_template('login.html')
@@ -37,7 +37,7 @@ def login_post():
     return redirect(url_for('index'))
 
 
-@app.route('/logout')
+@nuts.app.route('/logout')
 @allow_if(Is.connected)
 def logout():
     """Logout route."""
@@ -45,11 +45,11 @@ def logout():
     return render_template('login.html')
 
 
-@app.route('/')
+@nuts.app.route('/')
 @allow_if(Is.connected)
 def index():
     """The index displays all the available models."""
-    model_path = app.config['MODELS']
+    model_path = nuts.app.config['MODELS']
     models = {
         category: os.listdir(os.path.join(model_path, category))
         for category in os.listdir(model_path)
@@ -58,7 +58,7 @@ def index():
     return render_template('index.html', models=models, commits=commits)
 
 
-@app.route('/create/<document_type>', methods=('GET', 'POST'))
+@nuts.app.route('/create/<document_type>', methods=('GET', 'POST'))
 @allow_if(Is.connected)
 def create_document(document_type=None):
     """
@@ -77,13 +77,13 @@ def create_document(document_type=None):
                 'utf8'), 'error')
             return render_template('document_form.html',
                                    document_type=document_type)
-        for document in current_app.documents.values():
+        for document in nuts.documents.values():
             if document_name in document.list_document_ids():
                 flash('Un document porte déjà le même nom !'.decode('utf8'),
                       'error')
                 return render_template('document_form.html',
                                        document_type=document_type)
-        document = current_app.documents[document_type]
+        document = nuts.documents[document_type]
         try:
             document.create(document_name=document_name,
                             author_name=session.get('user'),
@@ -102,7 +102,7 @@ def create_document(document_type=None):
                                 document_name=document_name))
 
 
-@app.route('/edit/<document_type>/<path:document_name>')
+@nuts.app.route('/edit/<document_type>/<path:document_name>')
 @allow_if(Is.connected)
 @allow_if(Is.document_writable, NoPermission)
 def edit(document_name=None, document_type=None):
@@ -111,7 +111,7 @@ def edit(document_name=None, document_type=None):
         'edit.html', document_type=document_type, document_name=document_name)
 
 
-@app.route('/view/<document_type>/<path:document_name>/<version>')
+@nuts.app.route('/view/<document_type>/<path:document_name>/<version>')
 @allow_if(Is.connected)
 @allow_if(Is.document_readable, NoPermission)
 def view(document_name=None, document_type=None, version=None):
@@ -120,11 +120,11 @@ def view(document_name=None, document_type=None, version=None):
                            document_name=document_name, version=version)
 
 
-@app.route('/documents')
+@nuts.app.route('/documents')
 @allow_if(Is.connected)
 def documents():
     """Render the list of all the version of existing documents."""
-    document_classes = app.documents.values()
+    document_classes = nuts.documents.values()
     document_list = []
     for document_class in document_classes:
         document_ids = document_class.list_document_ids()
@@ -147,30 +147,30 @@ def documents():
                            document_list=document_list)
 
 
-@app.route('/model/<document_type>/<path:document_name>/head')
-@app.route('/model/<document_type>/<path:document_name>/<version>')
+@nuts.app.route('/model/<document_type>/<path:document_name>/head')
+@nuts.app.route('/model/<document_type>/<path:document_name>/<version>')
 @allow_if(Is.connected)
 def model(document_name=None, document_type=None, version=None):
     """The route which renders the ReST model parsed in HTML."""
-    document = current_app.documents[document_type]
+    document = nuts.documents[document_type]
     editable = False if version else True
     return document.html('model.html', editable=editable,
                          document_name=document_name, version=version)
 
 
-@app.route('/pdf/<document_type>/<path:document_name>')
-@app.route('/pdf/<document_type>/<path:document_name>/<version>')
+@nuts.app.route('/pdf/<document_type>/<path:document_name>')
+@nuts.app.route('/pdf/<document_type>/<path:document_name>/<version>')
 @allow_if(Is.connected)
 def pdf(document_type, document_name, version=None):
     """The route which returns a document as PDF."""
-    document = app.documents[document_type]
+    document = nuts.documents[document_type]
     return document.download_pdf(document_name=document_name,
                                  filename=document_name + '.pdf',
                                  version=version)
 
 
 # AJAX routes
-@app.route('/create_rights', methods=('POST',))
+@nuts.app.route('/create_rights', methods=('POST',))
 def create_rights():
     """Grant specific rights to a document."""
     document_id = request.form['document_id']
@@ -182,7 +182,7 @@ def create_rights():
     return jsonify({'user_id': user_id, 'read': read, 'write': write})
 
 
-@app.route('/read_rights', methods=('POST',))
+@nuts.app.route('/read_rights', methods=('POST',))
 def read_rights():
     """Render a list of users and their rights for the current document."""
     document_id = request.form['document_id']
@@ -198,7 +198,7 @@ def read_rights():
                            owner=owner, available_users=available_users)
 
 
-@app.route('/update_rights', methods=('POST',))
+@nuts.app.route('/update_rights', methods=('POST',))
 def update_rights():
     """Modify rights for a document."""
     document_id = request.form['document_id']
@@ -223,7 +223,7 @@ def update_rights():
     return jsonify({'label_rights': label_rights, 'rights': rights})
 
 
-@app.route('/delete_rights', methods=('POST',))
+@nuts.app.route('/delete_rights', methods=('POST',))
 def delete_rights():
     """Remove rights for a document."""
     document_id = request.form['document_id']
@@ -234,7 +234,7 @@ def delete_rights():
     return user_id
 
 
-@app.route('/pdf_link/<string:document_type>/<string:document_name>')
+@nuts.app.route('/pdf_link/<string:document_type>/<string:document_name>')
 def pdf_link(document_type, document_name):
     """Return the link for PDF downloading."""
     return url_for(

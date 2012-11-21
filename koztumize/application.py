@@ -1,7 +1,8 @@
 """Declare the Koztumize application using Pynuts."""
 
-import os
 import ldap
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 from pynuts import Pynuts
 
 
@@ -10,10 +11,12 @@ class Koztumize(Pynuts):
     @property
     def ldap(self):
         """Open the ldap."""
-        if 'LDAP' not in self.config:  # pragma: no cover
-            self.config['LDAP'] = ldap.open(self.config['LDAP_HOST'])
-        return self.config['LDAP']
+        if 'LDAP' not in self.app.config:  # pragma: no cover
+            self.app.config['LDAP'] = ldap.open(self.app.config['LDAP_HOST'])
+        return self.app.config['LDAP']
 
 
-app = Koztumize(  # pylint: disable=E1101
-    __name__, config_file=os.environ.get('KOZTUMIZE_CONFIG'))
+app = Flask(__name__)
+app.config.from_envvar('KOZTUMIZE_CONFIG')
+app.db = SQLAlchemy(app)
+nuts = Koztumize(app)

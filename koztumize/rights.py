@@ -2,11 +2,11 @@
 
 from flask import session, request, g
 from pynuts.rights import acl
-from .application import app
+from .application import nuts
 from .model import UserRights
 
 
-class Context(app.Context):
+class Context(nuts.Context):
     """This class create a context. You can add properties like and use methods
        in order to make rights. Your rights methods have to be decorated by
        `@acl` for access control in `allow_if` decorators. `allow_if` checks

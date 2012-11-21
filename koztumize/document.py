@@ -4,7 +4,7 @@
 import os
 import locale
 from itertools import islice, chain
-from .application import app
+from .application import nuts
 
 
 def priceformat(amount):
@@ -14,7 +14,7 @@ def priceformat(amount):
     return locale.format_string('%.2f', float(amount))
 
 
-class KozDoc(app.Document):
+class KozDoc(nuts.Document):
     """Base class for Koztumize documents."""
     def __init__(self, document_id, version=None):
         super(KozDoc, self).__init__(document_id, version)
@@ -24,7 +24,7 @@ class CourrierStandard(KozDoc):
     """Class for Standard Letter document."""
     type_name = 'courrier standard'
     model_path = os.path.join(
-        app.config['MODELS'], 'Courrier', 'courrier standard')
+        nuts.app.config['MODELS'], 'Courrier', 'courrier standard')
     document_id_template = '{document_name}'
 
 
@@ -36,7 +36,7 @@ class FactureAbonnement(KozDoc):
 
     type_name = 'facture abonnement'
     model_path = os.path.join(
-        app.config['MODELS'], 'Facture', 'facture abonnement')
+        nuts.app.config['MODELS'], 'Facture', 'facture abonnement')
     document_id_template = '{document_name}'
 
     def render_prix(self, data):

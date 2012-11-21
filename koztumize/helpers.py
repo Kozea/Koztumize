@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import pytz
-from .application import app
+from .application import nuts
 from heapq import nlargest
 from operator import itemgetter
 from datetime import datetime as dt
 from urllib import unquote
 import locale
-from flask import render_template, current_app, flash, redirect
+from flask import render_template, flash, redirect
 locale.setlocale(locale.LC_ALL, 'fr_FR')
 
 TZ_PARIS = pytz.timezone('Europe/Paris')
@@ -19,7 +19,7 @@ class NoPermission(Exception):
 
 
 def get_all_commits():
-    repo = current_app.document_repository
+    repo = nuts.document_repository
     read_ref = repo.refs.read_ref
     return (
         {
@@ -40,25 +40,25 @@ def get_last_commits(number=10):
     return nlargest(number, get_all_commits(), key=itemgetter('date'))
 
 
-@app.template_filter()
+@nuts.app.template_filter()
 def local_time(datetime):
     """Return the local time according to your timezone."""
     return pytz.utc.localize(datetime).astimezone(TZ_PARIS)  # pragma: no cover
 
 
-@app.template_filter()
+@nuts.app.template_filter()
 def strftime(datetime, formattime):
     return datetime.strftime(
         formattime.encode('utf8')).decode('utf8')  # pragma: no cover
 
 
-@app.errorhandler(403)
+@nuts.app.errorhandler(403)
 def login(error):
     """Forbidden error handler."""
     return render_template('login.html'), 403
 
 
-@app.errorhandler(NoPermission)
+@nuts.app.errorhandler(NoPermission)
 def no_permission(error):
     """NoPermission error handler."""
     flash(u"Vous n'avez pas l'autorisation d'accéder à cette page.", "error")
