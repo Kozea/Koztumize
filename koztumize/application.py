@@ -17,6 +17,6 @@ class Koztumize(Pynuts):
 
 
 app = Flask(__name__)
-app.config.from_envvar('KOZTUMIZE_CONFIG')
+app.config.from_envvar('KOZTUMIZE_CONFIG', silent=True)
 app.db = SQLAlchemy(app)
 nuts = Koztumize(app)
