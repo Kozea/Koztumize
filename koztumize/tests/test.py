@@ -109,7 +109,7 @@ def test_edit(client):
 def test_view(client):
     """Test the view page."""
     with client.application.test_request_context():
-        version = application.app.documents['test']('First test').version
+        version = application.nuts.documents['test']('First test').version
         response = request(client.get, url_for(
             'view', document_type='test', document_name='First test',
             version=version))
@@ -173,7 +173,7 @@ def test_rights(client):
         client.post('login', data={'login': 'Tester 2', 'passwd': 'tester2'})
 
         #Test read right
-        version = application.app.documents['test']('First test').version
+        version = application.nuts.documents['test']('First test').version
         response = request(client.get, url_for(
             'view', document_type='test', document_name='First test',
             version=version))
@@ -198,7 +198,7 @@ def test_rights(client):
 
         #Test update_rights
         #Allow only read
-        version = application.app.documents['test']('First test').version
+        version = application.nuts.documents['test']('First test').version
         data = {
             'document_id': 'First test',
             'user_id': 'Tester 2',
@@ -305,7 +305,7 @@ def test_rights(client):
 def test_save(client):
     """Test the document saving."""
     with client.application.test_request_context():
-        version = application.app.documents['test']('First test').version
+        version = application.nuts.documents['test']('First test').version
         data = json.dumps({
             'data': [{
                 'document_type': 'test',
