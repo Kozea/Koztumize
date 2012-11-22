@@ -4,9 +4,12 @@
 import os
 import shutil
 from tempfile import mkdtemp
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
 from brigit import Git
 
+from . import config
 from .. import application
 
 PATH = os.path.dirname(os.path.dirname(__file__))
@@ -35,9 +38,12 @@ def setup():
     if not os.path.exists(FAKE_DIR):
         os.mkdir(FAKE_DIR)
         Git(os.path.join(FAKE_DIR, 'documents.git')).init()
-    config_file = os.path.join(PATH, 'config', 'test.cfg')
-    app = application.Koztumize('koztumize', config_file=config_file)
+    app = Flask(__name__)
+    app.config.from_object(config)
+    app.db = SQLAlchemy(app)
+    nuts = application.Koztumize(app)
     application.app = app
+    application.nuts = nuts
     app.config['MODELS'] = os.path.join(TEMP_DIR, 'models')
     git = Git(app.config['MODELS'])
     git.init()
