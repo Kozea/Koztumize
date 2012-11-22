@@ -17,12 +17,9 @@ TEMP_DIR = None
 FAKE_DIR = os.path.join(PATH, 'tests', 'fake_instance')
 
 
-def execute_sql(app, filename, folder=None):
+def execute_sql(app, filename):
     """Execute a sql file in the sql folder for application.app"""
-    if folder == 'tests':
-        path = os.path.join(PATH, 'tests', 'sql', filename)
-    else:
-        path = os.path.join(PATH, 'sql', filename)
+    path = os.path.join(PATH, 'tests', 'sql', filename)
     with app.open_resource(path) as sqlfile:
         sql = sqlfile.read().decode('utf-8')
     app.db.session.execute(sql)
@@ -53,14 +50,14 @@ def setup():
     git.remote('add', '-t', 'models', 'origin', app.config['GIT_REMOTE'])
     git.pull()
     git.checkout('models')
-    execute_sql(app, 'db.sql', 'tests')
+    execute_sql(app, 'db.sql')
     import koztumize.routes
     import koztumize.tests.document
 
 
 def teardown():
     """Remove the temp directory after the tests."""
-    execute_sql(application.app, 'drop_all.sql', 'tests')
+    execute_sql(application.app, 'drop_all.sql')
     if os.path.exists(os.path.join(PATH, 'tests', 'fake_instance')):
         shutil.rmtree(os.path.join(PATH, 'tests', 'fake_instance'))
     if os.path.exists(TEMP_DIR):
