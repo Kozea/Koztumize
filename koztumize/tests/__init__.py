@@ -38,7 +38,10 @@ def setup():
     if not os.path.exists(FAKE_DIR):
         os.mkdir(FAKE_DIR)
         Git(os.path.join(FAKE_DIR, 'documents.git')).init()
-    app = Flask(__name__)
+    app = Flask(
+        __name__,
+        static_folder=os.path.join(PATH, 'static'),
+        template_folder=os.path.join(PATH, 'templates'))
     app.config.from_object(config)
     app.db = SQLAlchemy(app)
     nuts = application.Koztumize(app)

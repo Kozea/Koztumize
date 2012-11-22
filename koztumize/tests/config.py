@@ -14,18 +14,18 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 """
-The default config file of kuztumize.
+The testing config file of kuztumize.
 
 """
 import os
-from koztumize.tests.helpers import FakeLDAP
+from .helpers import FakeLDAP
 
 
-PATH = os.path.dirname(os.path.dirname(__file__))
+PATH = os.path.dirname(__file__)
 LDAP = FakeLDAP()
 LDAP_PATH = None
 SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://koztumize:koztumize@localhost/koztumize_test'
-PYNUTS_DOCUMENT_REPOSITORY = os.path.join(PATH, 'tests', 'fake_instance', 'documents.git')
+PYNUTS_DOCUMENT_REPOSITORY = os.path.join(PATH, 'fake_instance', 'documents.git')
 GIT_REMOTE = 'git://github.com/Kozea/Koztumize.git'
 SECRET_KEY = 'test'
 TESTING = True
