@@ -28,6 +28,38 @@ class CourrierStandard(KozDoc):
     document_id_template = '{document_name}'
 
 
+class FactureStandard(KozDoc):
+    """Class for Bills document."""
+    def __init__(self, document_id, version=None):
+        super(FactureAbonnement, self).__init__(document_id, version)
+        self.jinja_environment.filters['priceformat'] = priceformat
+
+    type_name = 'facture standard'
+    model_path = os.path.join(
+        nuts.app.config['MODELS'], 'Facture', 'facture standard')
+    document_id_template = '{document_name}'
+
+    def render_prix(self, data):
+        """Render the price for the total table."""
+        def batch(iterable, size):
+            """Allow list batching."""
+            sourceiter = iter(iterable)
+            while True:
+                batchiter = islice(sourceiter, size)
+                yield tuple(chain([batchiter.next()], batchiter))
+
+        total_ht = 0
+        total_tva = 0
+        for row in batch(data, 4):
+            total_ligne = int(row[1]) * (float(row[2].replace(',', '.')) * 100)
+            total_ht = total_ht + total_ligne
+            tva_ligne = total_ligne * (float(row[3].replace(',', '.')) / 100)
+            total_tva = total_tva + tva_ligne
+
+        return self.jinja_environment.get_template('prix.jinja2').render(
+            data=data, total_ht=total_ht, total_tva=total_tva)
+
+
 class FactureAbonnement(KozDoc):
     """Class for Bills document."""
     def __init__(self, document_id, version=None):
