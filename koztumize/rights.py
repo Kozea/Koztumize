@@ -21,31 +21,13 @@ class Context(nuts.Context):
 
 
 @acl
-def connected():
+def connected(**params):
     """Returns whether the user is connected."""
     return g.context.person is not None
 
 
-#@acl
-#def admin():
-#    """Returns whether the user is connected."""
-#    return session.get('user') == 'admin'
-
-
-#@acl
-#def in_his_domain():
-#    return session.get('user_group') == request.host.split('.')[0]
-
-
-#@acl
-#def document_owner():
-#    document = Rights.query.filter_by(
-#        document_id=request.view_args['document_name']).first()
-#    return app.context.person == document.owner
-
-
 @acl
-def document_readable():
+def document_readable(**params):
     """Return if a document is readable by the user."""
     document_id = request.view_args['document_name']
     user_id = g.context.person
@@ -55,7 +37,7 @@ def document_readable():
 
 
 @acl
-def document_writable():
+def document_writable(**params):
     """Return if a document is writable by the user."""
     document_id = request.view_args['document_name']
     user_id = g.context.person
