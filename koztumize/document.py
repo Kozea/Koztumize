@@ -51,6 +51,7 @@ class FactureStandard(KozDoc):
         total_ht = 0
         total_tva = 0
         for row in batch(data, 4):
+            row = list(row)
             if not row[1].isdigit():
                 row[1] = '1'
             total_ligne = int(row[1]) * (float(row[2].replace(',', '.')) * 100)
@@ -85,6 +86,7 @@ class FactureAbonnement(KozDoc):
         total_ht = 0
         total_tva = 0
         for row in batch(data, 4):
+            row = list(row)
             if not row[1].isdigit():
                 row[1] = '1'
             total_ligne = int(row[1]) * (float(row[2].replace(',', '.')) * 100)
