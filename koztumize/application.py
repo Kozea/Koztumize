@@ -11,7 +11,11 @@ class Koztumize(Pynuts):
     @property
     def ldap(self):
         """Open the ldap."""
-        if 'LDAP' not in self.app.config:  # pragma: no cover
+        try:  # pragma: no cover
+            self.app.config.get('LDAP').search_s(
+                self.app.config['LDAP_PATH'], ldap.SCOPE_ONELEVEL,
+                'uid=Test')
+        except:
             self.app.config['LDAP'] = ldap.open(self.app.config['LDAP_HOST'])
         return self.app.config['LDAP']
 
