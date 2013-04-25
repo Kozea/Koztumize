@@ -14,7 +14,7 @@ class Koztumize(Pynuts):
         try:  # pragma: no cover
             self.app.config.get('LDAP').search_s(
                 self.app.config['LDAP_PATH'], ldap.SCOPE_ONELEVEL,
-                'uid=Test')
+                'uid=Tester')
         except:
             self.app.config['LDAP'] = ldap.open(self.app.config['LDAP_HOST'])
         return self.app.config['LDAP']
