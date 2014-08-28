@@ -1,11 +1,12 @@
 {% extends "layout.html" %}
 
+{% block title %}Création d’un document{% endblock title %}
+
 {% block content %}
-<fieldset>
-  <legend>Veuillez choisir un nom pour le document :</legend>
+  <h2>Création d’un document</h2>
   <form action="{{ url_for('create_document', document_type=document_type) }}" method="post" name="document">
-    <input type="text" placeholder="Nom du document" name="name" maxlength="50" minlength="3" required autofocus>
-    <input type="submit">
+    <label for="name">Nom</label>
+    <input type="text" id="name" name="name" maxlength="50" minlength="3" required autofocus>
+      <input type="submit" value="Créer">
   </form>
-</fieldset>
 {% endblock content %}

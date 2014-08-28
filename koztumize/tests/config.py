@@ -18,12 +18,9 @@ The testing config file of kuztumize.
 
 """
 import os
-from .helpers import FakeLDAP
 
 
 PATH = os.path.dirname(__file__)
-LDAP = FakeLDAP()
-LDAP_PATH = None
 SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://koztumize:koztumize@localhost/koztumize_test'
 PYNUTS_DOCUMENT_REPOSITORY = os.path.join(PATH, 'fake_instance', 'documents.git')
 GIT_REMOTE = 'git://github.com/Kozea/Koztumize.git'

@@ -1,33 +1,34 @@
 {% extends "layout.html" %}
 
+{% block title %}Page d’accueil{% endblock title %}
+
 {% block content %}
-    <aside class="index">
-      {% for document in models.keys() %}  
-      <h2>{{ document }}</h2>
-        {% for model in models[document] %}
-        <ul>
-          <li><a href="{{ url_for('create_document', document_type=model) }}" >{{ model }}</a></li>
-        </ul>
-        {% endfor %}
+  <h2>Créer un document</h2>
+  {% for category, document_types in models.items() %}  
+    <h3>{{ category }}</h3>
+    <ul>
+      {% for document_type in document_types %}
+        <li>
+          <a href="{{ url_for('create_document', document_type=document_type) }}">
+            {{ document_type }}
+          </a>
+        </li>
       {% endfor %}
-    </aside>
-    
-    <aside class="last_commits">
-      <h3>Dernières modifications</h3>
-      <div>
-        <ul>
-        {% for commit in commits %}
-          <li>
-            <a href="{{ url_for('view', document_type=commit.ref[0], document_name=commit.ref[1], version=commit.version) }}" class="link">
-              <ul>
-                <li><span class="strong">Auteur :</span> {{ commit.author }}</li>
-                <li><span class="strong">Message :</span> {{ commit.message }}</li>
-                <li><span class="strong">Date :</span> {{ commit.date|local_time|strftime("Le %d %B %Y à %H:%M") }}</li>
-              </ul>
-            </a>
-          </li>
-        {% endfor %}
-        </ul>
-      </div>
-    </aside>
+    </ul>
+  {% endfor %}
+  
+  <h2>Dernières modifications</h2>
+  {% for commit in commits %}
+    <h3>
+      <a href="{{ url_for('view', document_type=commit.ref[0], document_name=commit.ref[1], version=commit.version) }}">
+        {{ commit.message }}
+      </a>
+    </h3>
+    <dl>
+      <dt>Auteur</dt><dd>{{ commit.author }}</dd>
+      <dt>Date</dt><dd>{{ commit.date|strftime("Le %d %B %Y à %H:%M") }}</dd>
+    </dl>
+  {% else %}
+    <p>Aucune modification effectuée.</p>
+  {% endfor %}
 {% endblock content %}

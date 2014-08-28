@@ -1,193 +1,10 @@
 {% extends "layout.html" %}
 
-{% block title %}
-- {{document_name}}
-{% endblock title %}
+{% block title %}{{ document_name }}{% endblock title %}
 
 {% block head %}
-<link href="{{ url_for('static', filename='TeddyBar/teddybar.css') }}" media="screen" type="text/css" rel="stylesheet" />
-<script src="{{ url_for('static', filename='TeddyBar/teddybar.js') }}" type="text/javascript"></script>
-<script src="{{ url_for('_pynuts-static', filename='javascript/save.js') }}" type="text/javascript"></script>
-<script>
-    function save_ok_callback() {
-        var message = 'Contenu enregistré.';
-        var div = $('<div>', {'class': 'ok'}).html(message);
-        $('body>section').before(div);
-        div.slideDown(300).delay(3000).fadeOut().queue(function(){$(this).remove()});
-    }
-    function save_error_callback() {
-        var message = 'Conflit: Veuillez rafraîchir la page.';
-        var div = $('<div>', {'class': 'error'}).html(message);
-        $('body>section').before(div);
-        div.slideDown(300).delay(3000).fadeOut().queue(function(){$(this).remove()});
-    }
-    function save_empty_callback() {
-        var message = 'Erreur, aucun champ n\'a été modifié';
-        var div = $('<div>', {'class': 'error'}).html(message);
-        $('body>section').before(div);
-        div.slideDown(300).delay(3000).fadeOut().queue(function(){$(this).remove()});
-    }
-    $(function () {
-        var iframe = $('<iframe>', {
-            'id': 'iframe',
-            'src': '{{ url_for("model", document_type=document_type, document_name=document_name) }}'
-        });
-        $('#teddybar').after(iframe);
-
-        $('#iframe').load(function(){
-            init_content($(this));
-        });
- 
-        $('#teddybar').teddybar({
-            document : function () { return document.getElementById('iframe').contentWindow.document },
-            commands : {
-                'save': function() {
-                    save_content({
-                        document: $('#iframe'),
-                        author: "{{ session.get('user') }}",
-                        author_email: "{{ session.get('usermail') }}",
-                        success_callback: save_ok_callback,
-                        fail_callback: save_error_callback,
-                        unchange_callback: save_empty_callback
-                    });
-                },
-                'save_as': function () {
-                    var message = prompt('Message:');
-                    if(message==null) {
-                        return false;
-                    } else if(message.length==0) {
-                        if(confirm('Vous n\'avez pas spécifié de message, continuer ?')) {
-                            this.save();
-                        } else {
-                            return false;
-                        }
-                    } else {
-                        save_content({
-                            document: $('#iframe'),
-                            author: "{{ session.get('user') }}",
-                            author_email: "{{ session.get('usermail') }}",
-                            message: message,
-                            success_callback: save_ok_callback,
-                            fail_callback: save_error_callback,
-                            unchange_callback: save_empty_callback
-                        });
-                    }
-                },
-                'pdf': function() {
-                    var loader = $('<div>', {'class': 'loading'});
-                    loader.fadeIn(500);
-
-                    $.ajax({
-                        url:"{{ url_for('pdf_link', document_type=document_type, document_name=document_name) }}",
-                        success: function(response){
-                            $('#loader').hide();
-                            window.location=response;
-                        }
-                    });
-                },
-                'settings': function () {
-                    $('#settings').toggle();
-                },
-                'pdf': function() {
-                    var loader = $('<div>', {'class': 'loading'});
-                    loader.fadeIn(500);
-                    $.ajax({
-                        url:"{{ url_for('pdf_link', document_type=document_type, document_name=document_name) }}",
-                        success: function(response){
-                            $('#loader').hide();
-                            window.location=response;
-                        }
-                    });
-                }
-            } // End commands
-        }); // End TeddyBar
-        
-        // Create settings div
-        settings = $('<div>', {'id': 'settings'});   
-        settings.load("{{ url_for('read_rights')}}", {'document_id': '{{ document_name }}'});
-        $('#teddybar .settings').after(settings).show();
-        
-        $('body').on('click', '.add-people', function () {
-            $('#users').toggle(200);
-        });
-
-        $('body').on('click', '#users input[type=button]', function() {
-            read = $('input[name=r]').is(':checked');
-            write = $('input[name=w]').is(':checked');
-            if(read === false && write === false) {
-                alert('Veuillez cocher au moins 1 case');
-                return false;
-            }
-            document_id = "{{ document_name }}";
-            user_id = $('select[name=user]').val();
-            $.ajax({
-                url: "{{ url_for('create_rights') }}",
-                type: 'post',
-                data: {
-                    'document_id': document_id,
-                    'user_id': user_id,
-                    'read': read,
-                    'write': write  
-                },
-                success: function(user) {
-                    rights = ['Lecture et Ecriture', 'rw'];
-                    if(user.write == 'true' && user.read == 'false') {
-                        rights = ['Ecriture', 'w'];
-                    }
-                    else if(user.write == 'false' && user.read == 'true'){
-                        rights = ['Lecture', 'r'];
-                    }
-                    row = '<tr data-user="' + user.user_id + '"><td>' + user.user_id + '</td><td class="rights"><a data-rights="' + rights[1] + '" class="update-people" href="javascript:display_right_options(\'' + document_id + '\',\'' + user.user_id + '\')">' + rights[0] + '</a></td><td><a href="javascript:" onclick="delete_rights(\'' + document_id + '\',\'' + user.user_id + '\')">x</a></td></tr>';
-                    $('#allowed-users').append(row);
-                    $('select[name=user]').find('option[value="' + user.user_id + '"]').remove();
-                    if($('select[name=user]').find('option').length == 0) {
-                        $('#users, .add-people').hide();
-                    }
-                }
-            });
-        }); 
-        if($('select[name=user]').find('option').length == 0) {
-            $('#users, .add-people').hide();
-        }
-    });// end $(function())
-    
-    function display_right_options(document_id, user_id) {
-        var link = $('tr[data-user="' + user_id + '"]').find('.update-people');
-        link.toggleClass('right-select');
-        if($('.right-options').length == 0) {
-            current_right = $('tr[data-user="' + user_id + '"]').find('.update-people').attr('data-rights');  
-            var ul = $('<ul>', {'class': 'right-options'});
-            options = [['Lecture', 'r'], ['Ecriture', 'w'], ['Lecture et Ecriture', 'rw']];
-            $.each(options, function () {
-              li = $('<li>');
-              if($(this)[1] == current_right) {
-                li.toggleClass('opt-selected');
-              }
-              a = $('<a>', {'href': 'javascript:', 'onclick': 'update_rights("' + document_id + '", "' + user_id + '", "' + $(this)[1] + '")'}).html($(this)[0]);
-              a.appendTo(li);
-              li.appendTo(ul);
-            });
-            link.after(ul);
-        }
-        else {
-            $('.right-options').remove();
-        }
-    }
-    function update_rights(document_id, user_id, rights) {
-         $.ajax({
-            url: "{{ url_for('update_rights') }}",
-            type: 'post',
-            data: {
-                'document_id': document_id,
-                'user_id': user_id,
-                'rights': rights
-            },
-            success: function(new_rights) {
-              $('.right-options').remove();
-              $('#allowed-users tr[data-user="' + user_id + '"]').find('.update-people').attr('data-rights', new_rights.rights).html(new_rights.label_rights);
-            }
-        });
-    }
+  <script src="{{ url_for('_pynuts-static', filename='javascript/save.js') }}" type="text/javascript"></script>
+  <script type="text/javascript">
     function delete_rights(document_id, user_id) {
         $.ajax({
             url: "{{ url_for('delete_rights') }}",
@@ -196,21 +13,146 @@
                 'document_id': document_id,
                 'user_id': user_id,
             },
-            success: function(user_id) {
-              $('#allowed-users').find('tr[data-user="' + user_id + '"]').remove();
-              option = $('<option>', {'value': user_id}).html(user_id);
+            success: function(user) {
+              $('#allowed-users').find('tr[data-user="' + user.user_id + '"]').remove();
+              option = $('<option>', {'value': user.user_id}).html(user.fullname);
               $('select[name=user]').append(option);
-              /*if($('select[name=user]').is(':hidden')) {
-                  $('#users, .add-people').show();
-              }*/
             }
         });
     }
 
-</script>
+    function save_callback(status) {
+        if (status == 'ok') {
+            var message = 'Contenu enregistré.';
+            var cls = 'info';
+        } else {
+            var cls = 'error';
+            if (status == 'error') {
+                var message = 'Conflit : Veuillez rafraîchir la page.';
+            } else {
+                var message = 'Erreur, aucun champ n’a été modifié';
+            }
+        }
+        return function() {
+            var div = $('<aside>', {'class': 'message '+ cls}).html(message);
+            $('h2').after(div);
+            div.slideDown(300).delay(3000).fadeOut().queue(function(){$(this).remove()});
+        };
+    }
+
+    $(function () {
+        $('#buttons a').each(function() {
+            $(this).attr('title', $(this).text());
+        });
+
+        $('#style a').each(function() {
+            $(this).click(function(event) {
+                var iframe_document = $('iframe')[0].contentWindow.document;
+                event.preventDefault();
+                role = $(this).attr('id');
+                if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote'].indexOf(role) >= 0) {
+                    iframe_document.execCommand('formatBlock', false, role);
+                } else {
+                    iframe_document.execCommand(role, false, null);
+                }
+                return false;
+            });
+        });
+
+        $('#save').click(function() {
+            save_content({
+                document: $('iframe'),
+                author: "{{ g.context.person.fullname }}",
+                author_email: "{{ g.context.person.mail }}",
+                success_callback: save_callback('ok'),
+                fail_callback: save_callback('error'),
+                unchange_callback: save_callback('unchanged')
+            });
+            return false;
+        });
+
+        $('#download').click(function() {
+            $.ajax({
+                url:"{{ url_for('pdf_link', document_type=document_type, document_name=document_name) }}",
+                success: function(response){
+                    $('#loader').hide();
+                    window.location=response;
+                }
+            });
+        });
+
+        $('#settings').click(function() {
+            if ($('#rights').length == 0) {
+                var a = $(this);
+                $.get('{{ url_for('read_rights', document_id=document_name)}}', function(data) {
+                    a.after($.parseHTML(data));
+                });
+            } else {
+                $('#rights').remove();
+            }
+            return false;
+        });
+        
+        $('body').on('click', '#users input[type=button]', function() {
+            read = $('input[name=r]').is(':checked');
+            write = $('input[name=w]').is(':checked');
+            if (read === false && write === false) {
+                return false;
+            }
+            $.ajax({
+                url: '{{ url_for('create_rights') }}',
+                type: 'post',
+                data: {
+                    'document_id': '{{ document_name }}',
+                    'user_id': $('select[name=user]').val(),
+                    'read': read,
+                    'write': write  
+                },
+                success: function(user) {
+                    rights = ['Lecture et écriture', 'rw'];
+                    if (user.write == 'true' && user.read == 'false') {
+                        rights = ['Écriture', 'w'];
+                    } else if (user.write == 'false' && user.read == 'true') {
+                        rights = ['Lecture', 'r'];
+                    }
+                    row = '<tr data-user="' + user.user_id + '"><td>' + user.fullname + '</td><td class="rights">' + rights[0] + '</td><td><a href="javascript:" onclick="delete_rights(\'{{ document_name }}\',\'' + user.user_id + '\')">×</a></td></tr>';
+                    $('#allowed-users').append(row);
+                    $('select[name=user]').find('option[value="' + user.user_id + '"]').remove();
+                }
+            });
+        }); 
+    });
+  </script>
 {% endblock head %}
 
 {% block content %}
-  <div id="teddybar"></div>
-{% endblock content %}
+  <h2>{{ document_name }}</h2>
 
+  <aside id="buttons">
+    <ul id="style">
+      <li><a id="undo" data-char="↶" href="#">Undo</a></li>
+      <li><a id="redo" data-char="↷" href="#">Redo</a></li>
+      <li><a id="bold" data-char="𝐁" href="#">Bold</a></li>
+      <li><a id="italic" data-char="𝐼" href="#">Italic</a></li>
+      <li><a id="blockquote" data-char="’’" href="#">Quote</a></li>
+      <li><a id="insertUnorderedList" data-char="•" href="#">Unordered list</a></li>
+      <li><a id="insertOrderedList" data-char="①" href="#">Ordered list</a></li>
+      <li><a id="h1" data-char="h1" href="#">h1</a></li>
+      <li><a id="h2" data-char="h2" href="#">h2</a></li>
+      <li><a id="h3" data-char="h3" href="#">h3</a></li>
+      <li><a id="h4" data-char="h4" href="#">h4</a></li>
+      <li><a id="h5" data-char="h5" href="#">h5</a></li>
+      <li><a id="h6" data-char="h6" href="#">h6</a></li>
+      <li><a id="p" data-char="p" href="#">p</a></li>
+      <li><a id="superscript" data-char="¹" href="#">Superscript</a></li>
+      <li><a id="subscript" data-char="₁" href="#">Subscript</a></li>
+    </ul>
+    <ul id="control">
+      <li><a id="settings" data-char="⚙" href="#">Settings</a></li>
+      <li><a id="save" data-char="⤒" href="#">Save</a></li>
+      <li><a id="download" data-char="📃" href="#">Download</a></li>
+    </ul>
+  </aside>
+
+  <iframe src="{{ url_for('model', document_type=document_type, document_name=document_name) }}"></iframe>
+{% endblock content %}

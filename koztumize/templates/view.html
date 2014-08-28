@@ -1,40 +1,31 @@
 {% extends "layout.html" %}
 
-{% block head %}
-<script src="http://code.jquery.com/ui/1.8.20/jquery-ui.min.js" type="text/javascript"></script>
-<style>
-.definition:empty:before {
-  display: none;
-}
-</style>
-<script>
-    function callIframe(callback) {
-        var iframe = $('<iframe>', {
-            'id': 'iframe',
-            'src': '{{ url_for("model", document_type=document_type, document_name=document_name, version=version) }}'
-        });
-        $(document.body).find('h2+ul').after(iframe);
+{% block title %}{{ document_name }}{% endblock title %}
 
-        $('#iframe').load(function(){
-            $('iframe').contents().find('.rem-line, .add-line').remove();
-            $('iframe').contents().find('span[contenteditable]').removeAttr('contenteditable');
-        });
+{% block head %}
+  <style>
+    .definition:empty:before {
+        display: none;
     }
-    
-    $(document).ready(function() { 
-        callIframe();
+  </style>
+  <script type="text/javascript">
+    $(function () {
+        $('iframe').load(function() {
+            $(this).contents().find('*[contenteditable]').removeAttr('contenteditable');
+        });
     });
-</script>
+  </script>
 {% endblock head %}
 
 {% block content %}
+  <h2>{{ document_name }}</h2>
 
-  <h2>{{ document_type }}/{{ document_name }}</h2>
-
-  <ul class="options">
-    <li><a href="{{ url_for('pdf', document_type=document_type, document_name=document_name, version=version) }}">Télécharger en PDF</a></li>
-    <li><a href="{{ url_for('edit', document_type=document_type, document_name=document_name) }}">Accéder à la dernière version</a></li>
-  </ul>
+  <aside id="options">
+    <ul>
+      <li><a href="{{ url_for('pdf', document_type=document_type, document_name=document_name, version=version) }}">Télécharger en PDF</a></li>
+      <li><a href="{{ url_for('edit', document_type=document_type, document_name=document_name) }}">Accéder à la dernière version</a></li>
+    </ul>
+  </aside>
  
+  <iframe src="{{ url_for('model', document_type=document_type, document_name=document_name) }}"></iframe>
 {% endblock content %}
-

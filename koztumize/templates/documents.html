@@ -1,83 +1,36 @@
 {% extends "layout.html" %}
 
-{% block title %}- Documents{% endblock title %}
-
-{% block head %}
-<script>
-  function toggle_info(elmt) {
-      $('ul#' + elmt).toggle();
-  }
-  function search_document(document_name) {
-      // Remove results if exist
-      $('#search-results').remove();
-
-      // If no search
-      if(document_name.length == 0) {
-        return false;
-      }
-      
-      var documents = [];
-      var index = [];
-      document_name = document_name.toLowerCase();
-      
-      // Get the documents called like the search value
-      $.each($('h4>a'), function () {
-          index.push($(this).html().toLowerCase().indexOf(document_name));
-      });
-      $.each(index, function(i, val) {
-          if(val != -1) {
-              documents.push($('h4').eq(i).html());
-          } 
-      });
-      
-      // Display the results
-      if(documents.length>0) {
-          
-          var list = $('<ul>', {'id': 'search-results'}).html('');
-          $.each(documents, function(i, val) {
-              var li = $('<li>').html(val);
-              list.append(li);
-          });    
-      } else {
-          var list = $('<ul>', {'id': 'search-results'});
-          list.append('<li>Pas de résultats</li>');
-      }
-      $('#doc-list').before(list);      
-  }
-</script>
-{% endblock head %}
+{% block title %}Documents{% endblock title %}
 
 {% block content %}
   <h2>Documents enregistrés</h2>
-  <input type="text" name="search" placeholder="Rechercher une archive" title="Rechercher une archive" oninput="return search_document($(this).val())"/>
-  <ul id="doc-list">
   {% for document_type, documents in document_list | groupby("type") %}
-    <li><h3>{{ document_type.capitalize() }}</h3>
+    <h3>{{ document_type }}</h3>
     {% for document in documents %}
+      <h4>
+        {% if g.context.person.user_id in document.users_write %}
+          <a href="{{ url_for('edit', document_type=document.type, document_name=document.document_id) }}">
+        {% endif %}
+        {{ document.document_id }}
+        {% if g.context.person.user_id in document.users_write %}
+          </a>
+        {% endif %}
+      </h4>
       <ul>
-        <li>
-          <h4>
-            <a{% if session.get('user') in document.users_write %} href="{{ url_for('edit', document_type=document.type, document_name=document.document_id) }}"{% endif %}>{{ document.document_id }}</a>
-          </h4>
-          <ul>
-            {% for version in document.history[:-1] %}
-              <li>
-                <a{% if session.get('user') in document.users_read %} href="{{ url_for('view', document_type=document.type, document_name=document.document_id, version=version.version) }}"{% endif %}>{{ version.datetime|local_time|strftime("Le %d %B %Y à %H:%M") }}</a>
-                {% if session.get('user') in document.users_read %}
-                <a href="javascript:toggle_info('{{ version.version[:7] }}')" class="details">+ détails</a>
-                <ul id="{{ version.version[:7] }}" class="document-info">
-                  <li>{{ version.message }}</li>
-                  <li>{{ version.author }}</li>
-                </ul>
-                {% endif %}
-              </li>
-            {% endfor %}
-            </ul>
-        </li>
+        {% for version in document.history[:-1] %}
+          <li>
+            {% if g.context.person.user_id in document.users_read %}
+              <a href="{{ url_for('view', document_type=document.type, document_name=document.document_id, version=version.version) }}">
+            {% endif %}
+              {{ version.datetime | localtime | strftime("Le %d %B %Y à %H:%M") }}
+            {%- if g.context.person.user_id in document.users_read -%}
+              </a> par {{ version.author.split(' <')[0] }} ({{ version.message }})
+            {% endif %}
+          </li>
+        {% endfor %}
       </ul>
-      {% endfor %}
-    </li>
+    {% endfor %}
+  {% else %}
+    <p>Aucun document enregistré</p>
   {% endfor %}
-  </ul>
-  </div>
 {% endblock content %}

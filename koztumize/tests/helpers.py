@@ -44,25 +44,3 @@ def request(method, route, status_code=200, content_type='text/html',
     eq_(response.status_code, status_code)
     assert content_type in response.content_type
     return response
-
-
-# This class is a monkey, it does not use its arguments
-# pylint: disable=W0613,R0201
-class FakeLDAP(object):
-    """Redefine the LDAP for the test suite."""
-    def search_s(self, *args, **kwargs):
-        """Redefine method search for the fake LDAP."""
-        fake_users = {
-            'Tester': 'testermail',
-            'Tester 2': 'tester2mail',
-        }
-        username = args[2][4:]
-        if username in fake_users:
-            return[[None, {'cn': [username], 'mail': [fake_users[username]]}]]
-        import ldap
-        raise ldap.INVALID_CREDENTIALS
-
-    def simple_bind_s(self, *args, **kwargs):
-        """Redefine method bind for the fake LDAP."""
-
-# pylint: enable=W0613,R0201
