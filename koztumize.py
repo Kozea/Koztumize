@@ -2,6 +2,8 @@
 """Executable file for Koztumize."""
 
 from koztumize.routes import nuts
+app = nuts.app
 
-nuts.app.secret_key = 'Azerty'
-nuts.app.run(debug=True, threaded=True, host='0.0.0.0', port=5000)
+app.secret_key = 'Azerty'
+if __name__ == '__main__':
+    app.run(debug=True, threaded=True, host='0.0.0.0', port=5000)
