@@ -10,7 +10,7 @@ DB = SQLAlchemy(app)
 class Rights(DB.Model):
     """Class for Rights table."""
     document_id = DB.Column(DB.Integer, primary_key=True)
-    owner = DB.Column(DB.String(), unique=True)
+    owner = DB.Column(DB.String, unique=True)
 
     def __init__(self, doc_id, owner):
         self.document_id = doc_id
@@ -20,7 +20,7 @@ class Rights(DB.Model):
 class UserRights(DB.Model):
     """Class for User_rights table."""
     document_id = DB.Column(DB.Integer, primary_key=True)
-    user_id = DB.Column(DB.String(), primary_key=True)
+    user_id = DB.Column(DB.String, primary_key=True)
     read = DB.Column(DB.Boolean, unique=True)
     write = DB.Column(DB.Boolean, unique=True)
 
@@ -34,7 +34,10 @@ class UserRights(DB.Model):
 class Users(DB.Model):
     """Class for User table."""
     user_id = DB.Column('uidNumber', DB.Integer, primary_key=True)
+    mail = DB.Column('mail', DB.String)
+    uid = DB.Column('uid', DB.String)
     name = DB.Column('sn', DB.String)
+    password = DB.Column('password', DB.String)
     firstname = DB.Column('givenName', DB.String)
     fullname = DB.Column('cn', DB.String)
     employe = DB.Column('employeeNumber', DB.Integer)

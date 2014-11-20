@@ -7,6 +7,5 @@ setup(
     license="GNU GPL v3",
     platforms="Any",
     packages=["koztumize"],
-    install_requires=[
-        'pynuts', 'python-ldap']
+    install_requires=['pynuts']
 )

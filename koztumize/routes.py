@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import ldap
 from flask import (render_template, request, redirect, url_for, jsonify,
                    session, flash)
 from pynuts.document import InvalidId
@@ -20,20 +19,17 @@ def login_post():
     """Test the user authentification."""
     username = request.form['login']
     password = request.form['passwd']
-    user = nuts.ldap.search_s(
-        nuts.app.config['LDAP_PATH'], ldap.SCOPE_ONELEVEL, "uid=%s" % username)
-    if not user or not password:
-        flash(u"Erreur : Les identifiants sont incorrects.", 'error')
-        return render_template('login.html')
     try:
-        nuts.ldap.simple_bind_s(user[0][0], password)
-    except ldap.INVALID_CREDENTIALS:  # pragma: no cover
+        user = (
+            Users.query
+            .filter(Users.uid == username)
+            .filter(Users.password == password)
+            .one())
+    except:
         flash(u"Erreur : Les identifiants sont incorrects.", 'error')
         return render_template('login.html')
-    session["user"] = user[0][1]['cn'][0].decode('utf-8')
-    session["usermail"] = user[0][1].get('mail', ["none"])[0].decode('utf-8')
-    session["user_group"] = user[0][1].get(
-        'o', ["none"])[0].decode('utf-8').lower()
+    session["user"] = user.fullname
+    session["usermail"] = user.mail
     return redirect(url_for('index'))
 
 
