@@ -22,16 +22,16 @@ def get_all_commits():
     repo = nuts.document_repository
     read_ref = repo.refs.read_ref
     return (
-        {
-            'message': commit.message.decode('utf-8'),
-            'author': commit.author.decode('utf-8'),
-            'date': dt.utcfromtimestamp(commit.commit_time),
-            'version': commit.id,
+	{
+            'message': result.commit.message.decode('utf-8'),
+            'author': result.commit.author.decode('utf-8'),
+            'date': dt.utcfromtimestamp(result.commit.commit_time),
+            'version': result.commit.id,
             'ref': tuple(unquote(ref).split('/', 1))}
         for ref in repo.refs.keys(base='refs/heads/documents/')
-        for commit in repo.revision_history(
+        for result in repo.get_walker(
             read_ref('refs/heads/documents/' + ref))
-        if commit.parents
+        if result.commit.parents
     )
 
 
